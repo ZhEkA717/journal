@@ -43,6 +43,11 @@ export class EmployeeRepository extends SyncableRepository<Employee> {
     return this.updateExisting(id, { firedAt });
   }
 
+  /** Возвращает сотрудника в штат: сбрасывает `firedAt`. */
+  async restore(id: string): Promise<Employee> {
+    return this.updateExisting(id, { firedAt: undefined });
+  }
+
   /** Помечает сотрудника удалённым. */
   async remove(id: string): Promise<Employee> {
     return this.softDelete(id);

@@ -38,3 +38,34 @@
   --spacing-screen-x: 16px;
   --spacing-between-sections: 24px;
 }
+
+// Layout tokens that are not utilities: the tab bar height and the safe area.
+:root {
+  --tab-bar-height: 56px;
+  --tab-bar-safe-height: calc(var(--tab-bar-height) + env(safe-area-inset-bottom, 0px));
+}
+
+// Общий вид полей ввода. Ionic рисует их в shadow DOM, поэтому стилизуем
+// через его собственные CSS-переменные (TZ 13.1, 4).
+@layer components {
+  .field-control {
+    --background: var(--color-surface);
+    --color: var(--color-text);
+    --placeholder-color: var(--color-text-muted);
+    --border-color: var(--color-border);
+    --highlight-color-focused: var(--ion-color-primary);
+    --border-radius: 10px;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    font-size: 16px;
+  }
+
+  .field-control-invalid {
+    --border-color: var(--color-danger);
+  }
+
+  .card-surface {
+    @apply rounded-card bg-[var(--color-surface)];
+    box-shadow: 0 1px 3px rgb(15 23 42 / 8%);
+  }
+}

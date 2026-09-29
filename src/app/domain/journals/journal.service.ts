@@ -20,6 +20,9 @@ export interface EntryValidationResult {
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const MIN_TITLE_LENGTH = 2;
 
+/** Колонки, которые заполняются автоматически из карточки сотрудника (ТЗ 9.3). */
+const DERIVED_ENTRY_KEYS = new Set(['employee', 'position']);
+
 /** Бизнес-логика журналов и записей: сводки, валидация, составление данных (TZ 8.3-8.5). */
 @Injectable({ providedIn: 'root' })
 export class JournalService {
@@ -112,8 +115,24 @@ export class JournalService {
 
   /** Проверяет значения записи по колонкам шаблона (TZ 8.5). */
   validateEntry(template: JournalTemplate, data: EntryData): EntryValidationResult {
+    return this.validateColumns(template.columns, data);
+  }
+
+  /**
+   * Проверяет только то, что вводит пользователь: колонки `employee` и `position`
+   * подставляются из карточки сотрудника при сохранении (ТЗ 9.3), поэтому форма
+   * записи не должна ругаться на них.
+   */
+  validateEntryInput(template: JournalTemplate, data: EntryData): EntryValidationResult {
+    return this.validateColumns(
+      template.columns.filter((column) => !DERIVED_ENTRY_KEYS.has(column.key)),
+      data,
+    );
+  }
+
+  private validateColumns(columns: readonly ColumnDef[], data: EntryData): EntryValidationResult {
     const errors: Record<string, string> = {};
-    for (const column of template.columns) {
+    for (const column of columns) {
       const value = data[column.key];
       if (column.required && this.isEmpty(value)) {
         errors[column.key] = `Заполните «${column.label}»`;

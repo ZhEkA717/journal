@@ -77,6 +77,11 @@ export class EmployeeService {
     return this.repository.markFired(id, this.date.today());
   }
 
+  /** Возвращает уволенного сотрудника в штат (ТЗ 8.6). */
+  async restore(id: string): Promise<Employee> {
+    return this.repository.restore(id);
+  }
+
   /** Помечает сотрудника удалённым. */
   async remove(id: string): Promise<Employee> {
     return this.repository.remove(id);

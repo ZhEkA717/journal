@@ -259,6 +259,31 @@ describe('JournalService', async () => {
       expect(result.errors['reason']).toBeUndefined();
     });
 
+    it('не требует ФИО и должность в пользовательских данных', async () => {
+      const fire = service.validateEntryInput(await template(FIRE_TEMPLATE_ID), {
+        date: '2026-09-01',
+        type: 'Вводный',
+        signature: 'sig',
+      });
+      expect(fire.valid).toBe(true);
+
+      const vacation = service.validateEntryInput(await template(VACATION_TEMPLATE_ID), {
+        startDate: '2026-01-01',
+        endDate: '2026-01-10',
+        days: 10,
+        signature: 'sig',
+      });
+      expect(vacation.valid).toBe(true);
+
+      const full = service.validateEntryInput(await template(VACATION_TEMPLATE_ID), {
+        employee: 'x',
+        position: 'y',
+        startDate: '2026-01-01',
+      });
+      expect(full.errors['employee']).toBeUndefined();
+      expect(full.errors['position']).toBeUndefined();
+    });
+
     it('проверяет дату, число и список', async () => {
       const fire = service.validateEntry(await template(FIRE_TEMPLATE_ID), {
         date: '01.09.2026',

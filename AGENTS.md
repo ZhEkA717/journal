@@ -10,8 +10,9 @@ Angular 22 + Ionic 9 + Tailwind CSS 4 приложение для ведения
 
 Планируется разбить работу на задачи T1–T12 (каркас → данные → shared → экраны →
 Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит критериев готовности).
-Текущее состояние: **T1 (каркас), T2 (слой данных) и T3 (shared) завершены**,
-все 9 экранов — заглушки.
+Текущее состояние: **T1 (каркас), T2 (слой данных), T3 (shared) и T4 (stores и
+экраны ТЗ 8.1–8.7) завершены**. Следующая — T5 (Supabase/Auth). PDF в детальном
+виде журнала и реальная синхронизация пока заглушки (Т7 и T5/T6).
 
 Что уже есть в слое данных:
 
@@ -36,6 +37,20 @@ Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит �
   (внутри модалки компонент получает ссылку через `IonModalToken` из `@ionic/angular/common`)
 - `shared/utils/uuid.ts` (UUID v4), `shared/utils/date.utils.ts` (`isIsoDate`)
 
+Что уже есть в stores и экранах (ТЗ 3, 8.1–8.7):
+
+- `stores/session.store.ts` — организация устройства, онбординг, `organizationId`
+  для остальных stores
+- `stores/journals.store.ts` — список журналов со сводками, шаблоны, create/close/remove
+- `stores/journal-detail.store.ts` — журнал, записи, сотрудники, `columns` шаблона
+  для формы записи, `rows` для таблицы (ТЗ 8.4)
+- `stores/employees.store.ts` — сотрудники, поиск, счётчики инструктажей, `fire`/`restore`
+- `features/onboarding/`, `features/journals/{journals-list,journal-create,journal-detail,entry-form}/`,
+  `features/employees/{employees-list,employee-form}/`, `features/settings/`
+- `core/storage/local-data.service.ts` — полная очистка локальной БД для действия «Выйти»
+- Оболочка `app.component.ts` строит навигацию вручную (`IonRouterOutlet` + `ion-tab-bar`),
+  потому что `ion-tabs` не работает с плоскими маршрутами вкладок (см. комментарий в файле)
+
 ## Команды
 
 | Задача       | Команда             |
@@ -52,7 +67,7 @@ Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит �
 ## Структура
 
 - `src/main.ts` — entrypoint, вызывает `bootstrapApplication(AppComponent, appConfig)`
-- `src/app/app.component.ts` — оболочка: `IonApp` + `IonTabs` + `IonRouterOutlet`
+- `src/app/app.component.ts` — оболочка: `IonApp` + `IonRouterOutlet` + ручной `ion-tab-bar`
 - `src/app/app.config.ts` — провайдеры: zoneless, роутер, `provideIonicAngular`, HTTP
 - `src/app/app.routes.ts` — маршруты и константа вкладок `APP_TABS`
 - `src/app/core/` — синглтоны и инфраструктура: `db`, `sync`, `supabase`, `pdf`, `auth`, `date`, `storage`
@@ -100,3 +115,16 @@ Moment.js, `any` в публичных API, хардкод цветов вне �
    `inject(AppDatabase)`. Не создавай `new AppDatabase()`: это откроет второе
    соединение и разорвёт наблюдение за очередью. Новая версия схемы добавляется
    инкрементально в `SCHEMA_MIGRATIONS`.
+7. **signalStore.** В одном `withMethods` соседние методы недоступны через `store.*`
+   (они попадают в state только после применения фичей). Если метод вызывает другой
+   метод того же блока — выноси общую логику в локальную `async`-функцию внутри
+   `withMethods`. Зависимые `computed` разноси по нескольким `withComputed`, иначе
+   получишь `NG0600` (чтение сигнала во время вычисления). Тип инстанса стора в
+   тестах — `InstanceType<typeof Store>`.
+8. **Автозаполняемые поля записи.** Колонки `employee` и `position` подставляются из
+   карточки сотрудника при сохранении (ТЗ 9.3). Форма записи валидирует только
+   пользовательский ввод через `JournalService.validateEntryInput`, а сохранение —
+   полный набор через `validateEntry`. Не меняй это на `validateEntry` в сторе, иначе
+   форма не даст сохранить запись.
+9. **Пайп `plural`** возвращает только форму слова. Числительное выводится рядом:
+   `{{ count }} {{ count | plural: 'запись' : 'записи' : 'записей' }}`.

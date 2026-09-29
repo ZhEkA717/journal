@@ -39,18 +39,32 @@ export const routes: Routes = [
     title: 'Новый журнал',
   },
   {
-    path: 'journals/:id',
+    path: 'journals/new',
     loadComponent: () =>
-      import('./features/journals/journal-detail/journal-detail.page').then(
-        (m) => m.JournalDetailPage,
+      import('./features/journals/journal-create/journal-create.page').then(
+        (m) => m.JournalCreatePage,
       ),
-    title: 'Журнал',
+    title: 'Новый журнал',
   },
   {
     path: 'journals/:id/entries/new',
     loadComponent: () =>
       import('./features/journals/entry-form/entry-form.page').then((m) => m.EntryFormPage),
     title: 'Новая запись',
+  },
+  {
+    path: 'journals/:id/entries/:entryId',
+    loadComponent: () =>
+      import('./features/journals/entry-form/entry-form.page').then((m) => m.EntryFormPage),
+    title: 'Запись',
+  },
+  {
+    path: 'journals/:id',
+    loadComponent: () =>
+      import('./features/journals/journal-detail/journal-detail.page').then(
+        (m) => m.JournalDetailPage,
+      ),
+    title: 'Журнал',
   },
   {
     path: 'employees',
@@ -67,6 +81,14 @@ export const routes: Routes = [
         (m) => m.EmployeeFormPage,
       ),
     title: 'Новый сотрудник',
+  },
+  {
+    path: 'employees/:id/edit',
+    loadComponent: () =>
+      import('./features/employees/employee-form/employee-form.page').then(
+        (m) => m.EmployeeFormPage,
+      ),
+    title: 'Сотрудник',
   },
   {
     path: 'reports',
