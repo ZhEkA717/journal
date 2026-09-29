@@ -10,8 +10,8 @@ Angular 22 + Ionic 9 + Tailwind CSS 4 приложение для ведения
 
 Планируется разбить работу на задачи T1–T12 (каркас → данные → shared → экраны →
 Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит критериев готовности).
-Текущее состояние: **T1 (каркас) и T2 (слой данных) завершены**, все 9 экранов —
-заглушки.
+Текущее состояние: **T1 (каркас), T2 (слой данных) и T3 (shared) завершены**,
+все 9 экранов — заглушки.
 
 Что уже есть в слое данных:
 
@@ -23,6 +23,18 @@ Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит �
 - `core/sync/sync-queue.service.ts` + `core/sync/online-status.service.ts`
 - `domain/<entity>/*.repository.ts` — CRUD, `domain/<entity>/*.service.ts` — бизнес-логика
 - `domain/templates/system-templates.ts` — 3 системных шаблона по ГОСТ (ТЗ 7)
+
+Что уже есть в shared (ТЗ 4):
+
+- `shared/pipes/date-ru.pipe.ts` — `dateRu` (DD.MM.YYYY) и `dateHuman` («вчера») через
+  `DateService`
+- `shared/pipes/plural.pipe.ts` — русские склонения: `n | plural:'запись':'записи':'записей'`
+- `shared/ui/signature-pad/` — рисование подписи пальцем (signature_pad) → PNG base64
+- `shared/ui/empty-state/`, `shared/ui/offline-banner/`, `shared/ui/sync-indicator/`
+- `shared/ui/toast/toast.service.ts` — обёртка над `ToastController`
+- `shared/ui/confirm-dialog/` — компонент + `ConfirmDialogService` поверх `ModalController`
+  (внутри модалки компонент получает ссылку через `IonModalToken` из `@ionic/angular/common`)
+- `shared/utils/uuid.ts` (UUID v4), `shared/utils/date.utils.ts` (`isIsoDate`)
 
 ## Команды
 

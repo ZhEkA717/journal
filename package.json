@@ -26,6 +26,7 @@
     "dexie": "^4.4.6",
     "ionicons": "^8.1.0",
     "rxjs": "~7.8.0",
+    "signature_pad": "^5.1.4",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
