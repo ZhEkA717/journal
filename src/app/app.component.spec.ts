@@ -13,12 +13,12 @@ describe('AppComponent', () => {
     }).compileComponents();
   });
 
-  it('создаёт оболочку приложения', () => {
+  it('создаётся', () => {
     const fixture = TestBed.createComponent(AppComponent);
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('показывает четыре вкладки', () => {
+  it('рендерит четыре вкладки', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelectorAll('ion-tab-button').length).toBe(4);

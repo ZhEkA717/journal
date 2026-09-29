@@ -10,7 +10,19 @@ Angular 22 + Ionic 9 + Tailwind CSS 4 приложение для ведения
 
 Планируется разбить работу на задачи T1–T12 (каркас → данные → shared → экраны →
 Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит критериев готовности).
-Текущее состояние: **T1 (каркас) завершён**, все 9 экранов — заглушки.
+Текущее состояние: **T1 (каркас) и T2 (слой данных) завершены**, все 9 экранов —
+заглушки.
+
+Что уже есть в слое данных:
+
+- `core/db/app-db.ts` — `AppDatabase` (Dexie) как `@Injectable({ providedIn: 'root' })`;
+  схема версий в `core/db/migrations.ts`, сид шаблонов — `core/db/seed.ts`
+- `core/db/syncable.repository.ts` — общий базовый класс репозиториев: запись в БД,
+  soft-delete, постановка операции в очередь синхронизации
+- `core/date/date.service.ts` — единственная обёртка над Day.js
+- `core/sync/sync-queue.service.ts` + `core/sync/online-status.service.ts`
+- `domain/<entity>/*.repository.ts` — CRUD, `domain/<entity>/*.service.ts` — бизнес-логика
+- `domain/templates/system-templates.ts` — 3 системных шаблона по ГОСТ (ТЗ 7)
 
 ## Команды
 
@@ -36,6 +48,7 @@ Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит �
 - `src/app/features/<feature>/<screen>/` — экраны (smart components)
 - `src/app/shared/` — dumb-компоненты, пайпы, утилиты
 - `src/environments/` — dev/prod-конфигурация, тип в `environment.model.ts`
+- `src/test-setup.ts` — `fake-indexeddb/auto` для тестов слоя данных (vitest)
 - `src/theme/variables.scss` — Ionic CSS-переменные
 - `src/styles.scss` — `@use 'tailwindcss'` и блок `@theme` с токенами дизайна
 - `docs/prototype-reference.tsx` — React-прототип как UI-референс, в сборку не входит
@@ -71,3 +84,7 @@ Moment.js, `any` в публичных API, хардкод цветов вне �
    `src/theme/variables.scss` (ТЗ 13).
 5. **Локальность данных.** Любая запись сначала уходит в IndexedDB, потом в очередь
    синхронизации. Пользователь не должен видеть «загрузку из-за сети» (ТЗ 3).
+6. **Единственный экземпляр БД.** `AppDatabase` — DI-провайдер, бери его через
+   `inject(AppDatabase)`. Не создавай `new AppDatabase()`: это откроет второе
+   соединение и разорвёт наблюдение за очередью. Новая версия схемы добавляется
+   инкрементально в `SCHEMA_MIGRATIONS`.

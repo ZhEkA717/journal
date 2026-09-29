@@ -22,6 +22,8 @@
     "@angular/platform-browser": "^22.2.0",
     "@angular/router": "^22.2.0",
     "@ionic/angular": "^9.0.5",
+    "dayjs": "^1.11.23",
+    "dexie": "^4.4.6",
     "ionicons": "^8.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
@@ -34,6 +36,7 @@
     "@tailwindcss/postcss": "^4.3.3",
     "angular-eslint": "22.5.0",
     "eslint": "^10.9.1",
+    "fake-indexeddb": "^6.2.5",
     "jsdom": "^30.0.0",
     "postcss": "^8.5.28",
     "prettier": "^3.8.1",
