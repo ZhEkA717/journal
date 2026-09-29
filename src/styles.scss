@@ -1,0 +1,40 @@
+@use 'tailwindcss';
+@use './theme/variables';
+
+// Design tokens (TZ 13.2-13.4). Every token below generates a matching utility
+// class, e.g. --text-h1 -> text-h1, --radius-card -> rounded-card,
+// --spacing-between-cards -> gap-between-cards.
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  --text-h1: 24px;
+  --text-h1--line-height: 32px;
+  --text-h1--font-weight: 700;
+
+  --text-h2: 20px;
+  --text-h2--line-height: 28px;
+  --text-h2--font-weight: 600;
+
+  --text-h3: 17px;
+  --text-h3--line-height: 24px;
+  --text-h3--font-weight: 600;
+
+  --text-body: 16px;
+  --text-body--line-height: 24px;
+
+  --text-small: 14px;
+  --text-small--line-height: 20px;
+
+  --text-tiny: 12px;
+  --text-tiny--line-height: 16px;
+
+  --radius-card: 12px;
+  --radius-button: 10px;
+  --radius-input: 10px;
+  --radius-modal: 16px;
+
+  --spacing-inside-card: 16px;
+  --spacing-between-cards: 12px;
+  --spacing-screen-x: 16px;
+  --spacing-between-sections: 24px;
+}

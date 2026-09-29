@@ -1,0 +1,23 @@
+// Ionic CSS custom properties. Overrides must be wrapped in a selector with
+// higher specificity than Ionic's own `:root` definitions, otherwise Ionic
+// resets win (see Ionic docs, "Custom Properties").
+body {
+  --ion-font-family: 'Inter', system-ui, sans-serif;
+  --ion-color-primary: #2563eb;
+  --ion-color-primary-rgb: 37, 99, 235;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #2157cf;
+  --ion-color-primary-tint: #3b73ed;
+}
+
+// Default palette, referenced by Tailwind tokens in src/styles.scss. This is the
+// only place base brand colors are defined (TZ 12.1).
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-danger: #dc2626;
+}

@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+.angular/
+
+# Caches
+.cache/
+.vite/
+*.tsbuildinfo
+
+# Env / secrets
+.env*
+!.env.example
+
+# Logs
+*-debug.log*
+logs/
+*.log
+
+# Editors
+.idea/
+.DS_Store
+Thumbs.db
+
+# Agent state, not project source
+.claude-replay.*
+.tmp-*
+/.figma/
+/.plugins/
+/.opencode-skills/
