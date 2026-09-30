@@ -49,7 +49,7 @@ import { Router, RouterLink } from '@angular/router';
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="text-h2">Мои журналы</ion-title>
+        <ion-title class="text-h2 pl-4">Мои журналы</ion-title>
         <ion-buttons slot="end">
           <ion-button routerLink="/settings" aria-label="Настройки">
             <ion-icon slot="icon-only" [name]="settingsIcon" />

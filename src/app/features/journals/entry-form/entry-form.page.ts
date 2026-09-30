@@ -62,7 +62,7 @@ const DERIVED_KEYS: readonly string[] = ['employee', 'position'];
         <ion-buttons slot="start">
           <ion-back-button [defaultHref]="backHref" text="" />
         </ion-buttons>
-        <ion-title class="text-h3">{{ isEditing ? 'Запись' : 'Новая запись' }}</ion-title>
+        <ion-title class="text-h3 pl-4">{{ isEditing ? 'Запись' : 'Новая запись' }}</ion-title>
         <ion-buttons slot="end">
           <ion-button [disabled]="saving()" (click)="save()">Сохранить</ion-button>
         </ion-buttons>

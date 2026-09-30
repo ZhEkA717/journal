@@ -22,7 +22,7 @@ import { IonModalToken } from '@ionic/angular/common';
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title>{{ title() }}</ion-title>
+        <ion-title class="pl-4">{{ title() }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">

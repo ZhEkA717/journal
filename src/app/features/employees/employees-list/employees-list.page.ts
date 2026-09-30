@@ -52,7 +52,7 @@ import { EmployeesStore } from '../../../stores/employees.store';
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="text-h2">Сотрудники</ion-title>
+        <ion-title class="text-h2 pl-4">Сотрудники</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="toggleSearch()" [attr.aria-label]="searchButtonLabel">
             <ion-icon slot="icon-only" [name]="searchIcon" />

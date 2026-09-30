@@ -15,7 +15,7 @@ import { IonIcon, IonLabel } from '@ionic/angular';
     class: 'fixed right-screen-x z-30',
     // Панель вкладок видна только на корневых маршрутах, поэтому смещение
     // задаётся из оболочки: `--tab-bar-height` живёт там же, где сама панель.
-    style: 'bottom: calc(var(--tab-bar-safe-height, 0px) + var(--fab-offset, 16px));',
+    style: 'bottom: 16px;',
   },
   template: `
     <a

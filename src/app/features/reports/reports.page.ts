@@ -12,7 +12,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title>Отчёты</ion-title>
+        <ion-title class="pl-4">Отчёты</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content [fullscreen]="true">

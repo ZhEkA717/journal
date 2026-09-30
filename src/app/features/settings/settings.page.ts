@@ -47,7 +47,7 @@ const APP_VERSION = '0.0.0';
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title class="text-h2">Настройки</ion-title>
+        <ion-title class="text-h2 pl-4">Настройки</ion-title>
       </ion-toolbar>
     </ion-header>
 

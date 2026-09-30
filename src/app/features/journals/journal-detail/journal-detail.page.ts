@@ -69,7 +69,7 @@ import { JournalsStore } from '../../../stores/journals.store';
         <ion-buttons slot="start">
           <ion-back-button defaultHref="/journals" text="" />
         </ion-buttons>
-        <ion-title class="text-h3">{{ store.journal()?.title ?? 'Журнал' }}</ion-title>
+        <ion-title class="text-h3 pl-4">{{ store.journal()?.title ?? 'Журнал' }}</ion-title>
         <ion-buttons slot="end">
           <ion-button id="journal-menu-button" aria-label="Меню журнала">
             <ion-icon slot="icon-only" [name]="menuIcon" />
