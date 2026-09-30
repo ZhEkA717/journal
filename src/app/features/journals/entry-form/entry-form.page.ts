@@ -184,7 +184,6 @@ const DERIVED_KEYS: readonly string[] = ['employee', 'position'];
                   <ion-textarea
                     class="field-control"
                     fill="outline"
-                    autoGrow
                     [value]="stringValue(column.key)"
                     (ionInput)="onTextArea(column.key, $event)"
                   />

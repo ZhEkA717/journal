@@ -113,6 +113,7 @@ import { EmployeesStore } from '../../../stores/employees.store';
           class="h-13 text-body font-semibold"
           [disabled]="saving()"
           (click)="save()"
+          color="primary"
         >
           {{ saving() ? 'Сохраняем…' : 'Сохранить' }}
         </ion-button>

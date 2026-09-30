@@ -15,7 +15,7 @@ import { IonIcon, IonLabel } from '@ionic/angular';
     class: 'fixed right-screen-x z-30',
     // Панель вкладок видна только на корневых маршрутах, поэтому смещение
     // задаётся из оболочки: `--tab-bar-height` живёт там же, где сама панель.
-    style: 'bottom: 16px;',
+    style: 'bottom: calc(var(--tab-bar-safe-height, 0px) + var(--fab-offset, 16px));',
   },
   template: `
     <a
@@ -31,7 +31,7 @@ import { IonIcon, IonLabel } from '@ionic/angular';
 })
 export class FabComponent {
   /** Адрес маршрута, куда ведёт кнопка. */
-  readonly link = input.required<string>();
+  readonly link = input<string>();
   /** Имя иконки ionicons. */
   readonly icon = input('add');
   /** Подпись рядом с иконкой; без неё кнопка круглая. */

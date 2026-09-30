@@ -33,7 +33,12 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "node_modules/@ionic/angular/css/structure.css",
+              "node_modules/@ionic/angular/css/core.css",
+              "node_modules/@ionic/angular/css/padding.css",
+              "src/styles.scss"
+            ],
             "stylePreprocessorOptions": {
               "includePaths": ["src"]
             }

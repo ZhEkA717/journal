@@ -31,6 +31,7 @@ import { errorMessage } from '../../../shared/utils/error.utils';
 import { OnlineStatusService } from '../../../core/sync/online-status.service';
 import { JournalDetailStore } from '../../../stores/journal-detail.store';
 import { JournalsStore } from '../../../stores/journals.store';
+import { FabComponent } from '../../../shared/ui/fab/fab.component';
 
 /**
  * Детальный вид журнала: шапка, меню и таблица записей (ТЗ 8.4).
@@ -62,6 +63,7 @@ import { JournalsStore } from '../../../stores/journals.store';
     PluralPipe,
     EmptyStateComponent,
     OfflineBannerComponent,
+    FabComponent,
   ],
   template: `
     <ion-header>
@@ -224,13 +226,14 @@ import { JournalsStore } from '../../../stores/journals.store';
           Экспорт в PDF
         </ion-button>
       </div>
-      <ion-button
-        class="fixed right-screen-x bottom-4 z-30 flex h-14 items-center gap-2 rounded-full bg-[var(--color-accent)] px-4 font-semibold text-white shadow-lg"
-        (click)="addEntry()"
-      >
-        <ion-icon name="add" class="text-xl" aria-hidden="true" />
-        Добавить запись
-      </ion-button>
+<!--      <ion-button-->
+<!--        class="fixed right-screen-x bottom-16 z-30 flex h-14 items-center gap-2 rounded-full bg-[var(&#45;&#45;color-accent)] px-4 font-semibold text-white shadow-lg"-->
+<!--        (click)="addEntry()"-->
+<!--      >-->
+<!--        <ion-icon name="add-outline" class="text-xl" aria-hidden="true" />-->
+<!--        Добавить запись-->
+<!--      </ion-button>-->
+      <app-fab icon="add-outline" label="Добавить запись" (click)="addEntry()"></app-fab>
     }
   `,
 })

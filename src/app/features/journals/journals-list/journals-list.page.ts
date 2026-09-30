@@ -140,7 +140,7 @@ import { Router, RouterLink } from '@angular/router';
     </ion-content>
 
     @if (store.hasJournals()) {
-      <app-fab link="/journals/create" icon="add" label="Создать" />
+      <app-fab link="/journals/create" icon="add-outline" label="Создать" />
     }
   `,
 })
