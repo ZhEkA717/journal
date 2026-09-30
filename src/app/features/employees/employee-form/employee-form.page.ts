@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
+  type InputCustomEvent,
   IonBackButton,
   IonButton,
   IonButtons,
@@ -7,11 +8,9 @@ import {
   IonHeader,
   IonInput,
   IonTitle,
-  IonToolbar,
-  type InputCustomEvent,
+  IonToolbar
 } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RouterLink } from '@angular/router';
 
 import { DateService } from '../../../core/date/date.service';
 import { FormFieldComponent } from '../../../shared/ui/form-field/form-field.component';
@@ -38,7 +37,6 @@ import { EmployeesStore } from '../../../stores/employees.store';
     IonInput,
     FormFieldComponent,
     SignaturePadComponent,
-    RouterLink,
   ],
   template: `
     <ion-header>

@@ -11,8 +11,6 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { chevronForwardOutline, refreshOutline, settingsOutline } from 'ionicons/icons';
 
 import { OnlineStatusService } from '../../../core/sync/online-status.service';
 import { DateRuPipe } from '../../../shared/pipes/date-ru.pipe';
@@ -174,5 +172,3 @@ export class JournalsListPage {
     void this.router.navigateByUrl('/journals/create');
   }
 }
-
-addIcons({ chevronForwardOutline, refreshOutline, settingsOutline });

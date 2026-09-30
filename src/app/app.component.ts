@@ -14,9 +14,8 @@ import {
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
+  IonTabs,
 } from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { barChartOutline, listOutline, peopleOutline, settingsOutline } from 'ionicons/icons';
 import { filter, map } from 'rxjs';
 
 import { APP_TABS } from './app.routes';
@@ -40,24 +39,26 @@ interface TabButtonElement extends HTMLElement {
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [IonApp, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon],
+  imports: [IonApp, IonRouterOutlet, IonTabs, IonTabBar, IonTabButton, IonLabel, IonIcon],
   template: `
     <ion-app>
       @if (session.isReady()) {
         <ion-router-outlet />
         @if (activeTab(); as tab) {
-          <ion-tab-bar
-            slot="bottom"
-            [selectedTab]="tab.id"
-            (ionTabButtonClick)="onTabClick($event)"
-          >
-            @for (item of tabs; track item.id) {
-              <ion-tab-button [tab]="item.id" [href]="item.href">
-                <ion-icon [name]="item.icon" aria-hidden="true" />
-                <ion-label>{{ item.label }}</ion-label>
-              </ion-tab-button>
-            }
-          </ion-tab-bar>
+          <ion-tabs>
+            <ion-tab-bar
+              slot="bottom"
+              [selectedTab]="tab.id"
+              (ionTabButtonClick)="onTabClick($event)"
+            >
+              @for (item of tabs; track item.id) {
+                <ion-tab-button [tab]="item.id" [href]="item.href">
+                  <ion-icon [name]="item.icon" aria-hidden="true" />
+                  <ion-label>{{ item.label }}</ion-label>
+                </ion-tab-button>
+              }
+            </ion-tab-bar>
+          </ion-tabs>
         }
       }
     </ion-app>
@@ -124,5 +125,3 @@ export class AppComponent {
 function cleanPath(url: string): string {
   return `/${url.split(/[?#]/)[0].split('/').filter(Boolean).join('/')}`;
 }
-
-addIcons({ barChartOutline, listOutline, peopleOutline, settingsOutline });

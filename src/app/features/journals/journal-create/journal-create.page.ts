@@ -12,8 +12,6 @@ import {
   type InputCustomEvent,
 } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { addIcons } from 'ionicons';
-import { checkmarkOutline } from 'ionicons/icons';
 
 import type { JournalTemplate } from '../../../domain/journals/journal-template.model';
 import { DateService } from '../../../core/date/date.service';
@@ -157,7 +155,7 @@ import { SessionStore } from '../../../stores/session.store';
   `,
 })
 export class JournalCreatePage {
-  private readonly store = inject(JournalsStore);
+  protected readonly store = inject(JournalsStore);
   private readonly session = inject(SessionStore);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
@@ -260,5 +258,3 @@ export class JournalCreatePage {
     this.errors.set(next);
   }
 }
-
-addIcons({ checkmarkOutline });

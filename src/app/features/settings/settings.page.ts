@@ -11,8 +11,6 @@ import {
   type InputCustomEvent,
 } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { addIcons } from 'ionicons';
-import { chevronForwardOutline, cloudDoneOutline, cloudOfflineOutline } from 'ionicons/icons';
 
 import { LocalDataService } from '../../core/storage/local-data.service';
 import { OnlineStatusService } from '../../core/sync/online-status.service';
@@ -22,6 +20,8 @@ import { FormFieldComponent } from '../../shared/ui/form-field/form-field.compon
 import { ToastService } from '../../shared/ui/toast/toast.service';
 import { errorMessage } from '../../shared/utils/error.utils';
 import { SessionStore } from '../../stores/session.store';
+import { addIcons } from 'ionicons';
+import { chevronForwardOutline, cloudDoneOutline, cloudOfflineOutline } from 'ionicons/icons';
 
 /** Версия приложения из `package.json` (ТЗ 8.7). */
 const APP_VERSION = '0.0.0';
@@ -220,7 +220,7 @@ const APP_VERSION = '0.0.0';
 })
 export class SettingsPage {
   private readonly session = inject(SessionStore);
-  private readonly online = inject(OnlineStatusService);
+  protected readonly online = inject(OnlineStatusService);
   private readonly queue = inject(SyncQueueService);
   private readonly localData = inject(LocalDataService);
   private readonly confirm = inject(ConfirmDialogService);

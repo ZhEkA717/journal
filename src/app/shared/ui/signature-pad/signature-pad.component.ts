@@ -12,8 +12,6 @@ import {
   viewChild,
 } from '@angular/core';
 import { IonButton, IonIcon } from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { closeOutline } from 'ionicons/icons';
 import SignaturePadLib from 'signature_pad';
 
 /**
@@ -169,5 +167,3 @@ export class SignaturePadComponent {
     }
   };
 }
-
-addIcons({ closeOutline });

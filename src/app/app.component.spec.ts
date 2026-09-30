@@ -60,9 +60,13 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
 
-    const button: HTMLElement & { tab: string } =
-      fixture.nativeElement.querySelectorAll('ion-tab-button')[1];
-    button.dispatchEvent(new CustomEvent('ionTabButtonClick', { bubbles: true }));
+    const button = fixture.nativeElement.querySelectorAll('ion-tab-button')[1];
+    button.dispatchEvent(
+      new CustomEvent('ionTabButtonClick', {
+        bubbles: true,
+        detail: { tab: 'employees' },
+      }),
+    );
     await fixture.whenStable();
 
     expect(router.url).toBe('/employees');

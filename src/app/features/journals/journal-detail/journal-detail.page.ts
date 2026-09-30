@@ -19,15 +19,6 @@ import {
   IonToolbar,
 } from '@ionic/angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { addIcons } from 'ionicons';
-import {
-  checkmarkCircleOutline,
-  closeOutline,
-  downloadOutline,
-  ellipsisVerticalOutline,
-  trashOutline,
-  warningOutline,
-} from 'ionicons/icons';
 
 import { DateRuPipe } from '../../../shared/pipes/date-ru.pipe';
 import { PluralPipe } from '../../../shared/pipes/plural.pipe';
@@ -187,7 +178,7 @@ import { JournalsStore } from '../../../stores/journals.store';
           <ion-list lines="none">
             @for (row of store.rows(); track row.id) {
               <ion-item-sliding>
-                <ion-item button [routerLink]="entryLink(row.id)" [detail]="false">
+                <ion-item type="button" [routerLink]="entryLink(row.id)" [detail]="false">
                   <div
                     class="grid w-full grid-cols-[72px_1fr_96px_32px] gap-2 py-2 text-small text-[var(--color-text)]"
                   >
@@ -247,7 +238,7 @@ export class JournalDetailPage {
   /** Данные журнала и записей. */
   protected readonly store = inject(JournalDetailStore);
   private readonly journals = inject(JournalsStore);
-  private readonly online = inject(OnlineStatusService);
+  protected readonly online = inject(OnlineStatusService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly confirm = inject(ConfirmDialogService);
@@ -351,12 +342,3 @@ export class JournalDetailPage {
     await this.router.navigateByUrl('/journals', { replaceUrl: true });
   }
 }
-
-addIcons({
-  checkmarkCircleOutline,
-  closeOutline,
-  downloadOutline,
-  ellipsisVerticalOutline,
-  trashOutline,
-  warningOutline,
-});

@@ -45,6 +45,16 @@
   --tab-bar-safe-height: calc(var(--tab-bar-height) + env(safe-area-inset-bottom, 0px));
 }
 
+ion-app {
+  display: flex;
+  flex-direction: column;
+}
+
+ion-router-outlet {
+  flex: 1;
+  display: block;
+}
+
 // Общий вид полей ввода. Ionic рисует их в shadow DOM, поэтому стилизуем
 // через его собственные CSS-переменные (TZ 13.1, 4).
 @layer components {
@@ -68,4 +78,41 @@
     @apply rounded-card bg-[var(--color-surface)];
     box-shadow: 0 1px 3px rgb(15 23 42 / 8%);
   }
+}
+
+ion-button {
+  --color: inherit;
+  --background: transparent;
+  color: var(--color, var(--ion-color-primary));
+  font: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+ion-button[fill="solid"],
+ion-button:not([fill]) {
+  color: var(--ion-color-primary-contrast);
+}
+
+ion-button[fill="outline"] {
+  color: var(--ion-color-primary);
+}
+
+ion-button[fill="clear"] {
+  color: var(--ion-color-primary);
+}
+
+ion-button[color="medium"] {
+  color: var(--ion-color-medium);
+}
+
+ion-button[color="danger"] {
+  color: var(--ion-color-danger);
+}
+
+ion-button[color="secondary"] {
+  color: var(--ion-color-secondary);
+}
+ion-content {
+  height: calc(100% - 56px);
 }

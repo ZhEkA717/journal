@@ -2,8 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { IonButton, IonContent, IonIcon, IonInput } from '@ionic/angular';
 import { Router } from '@angular/router';
 import type { InputCustomEvent } from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { bookOutline, lockClosedOutline } from 'ionicons/icons';
 
 import { FormFieldComponent } from '../../shared/ui/form-field/form-field.component';
 import { errorMessage } from '../../shared/utils/error.utils';
@@ -166,5 +164,3 @@ export class OnboardingPage {
     this.errors.set(next);
   }
 }
-
-addIcons({ bookOutline, lockClosedOutline });

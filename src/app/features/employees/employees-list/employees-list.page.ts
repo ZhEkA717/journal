@@ -14,8 +14,6 @@ import {
   type SearchbarCustomEvent,
 } from '@ionic/angular';
 import { Router, RouterLink } from '@angular/router';
-import { addIcons } from 'ionicons';
-import { addOutline, searchOutline } from 'ionicons/icons';
 
 import { DateRuPipe } from '../../../shared/pipes/date-ru.pipe';
 import { PluralPipe } from '../../../shared/pipes/plural.pipe';
@@ -151,7 +149,7 @@ import { EmployeesStore } from '../../../stores/employees.store';
       </div>
     </ion-content>
 
-    <app-fab link="/employees/new" icon="add" label="Добавить" />
+    <app-fab link="/employees/new" icon="add-outline" label="Добавить" />
   `,
 })
 export class EmployeesListPage {
@@ -200,5 +198,3 @@ export class EmployeesListPage {
     await (event.target as HTMLIonRefresherElement).complete();
   }
 }
-
-addIcons({ addOutline, searchOutline });

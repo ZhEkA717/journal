@@ -1,12 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { IonIcon } from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import {
-  checkmarkCircleOutline,
-  cloudOfflineOutline,
-  syncOutline,
-  warningOutline,
-} from 'ionicons/icons';
 
 import type { SyncStatus } from '../../../core/models/base.model';
 
@@ -70,5 +63,3 @@ export class SyncIndicatorComponent {
     return labels[this.state()];
   });
 }
-
-addIcons({ checkmarkCircleOutline, cloudOfflineOutline, syncOutline, warningOutline });

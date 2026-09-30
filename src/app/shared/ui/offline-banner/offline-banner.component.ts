@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { IonIcon } from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { cloudOfflineOutline } from 'ionicons/icons';
 
 /** Оранжевая полоса сверху, когда приложение работает без сети (ТЗ 8.2). */
 @Component({
@@ -29,5 +27,3 @@ export class OfflineBannerComponent {
   /** Зарегистрированная иконка ionicons. */
   protected readonly icon = 'cloud-offline-outline';
 }
-
-addIcons({ cloudOfflineOutline });
