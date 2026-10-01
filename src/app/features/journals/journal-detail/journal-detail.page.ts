@@ -4,6 +4,7 @@ import {
   IonButton,
   IonButtons,
   IonContent,
+  IonFooter,
   IonHeader,
   IonIcon,
   IonItem,
@@ -48,6 +49,7 @@ import { FabComponent } from '../../../shared/ui/fab/fab.component';
     IonButton,
     IonBackButton,
     IonContent,
+    IonFooter,
     IonIcon,
     IonPopover,
     IonRefresher,
@@ -65,6 +67,25 @@ import { FabComponent } from '../../../shared/ui/fab/fab.component';
     OfflineBannerComponent,
     FabComponent,
   ],
+  styles: `
+    ion-footer.export-footer {
+      background: var(--color-bg);
+      height: var(--tab-bar-safe-height);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 8px;
+    }
+
+    ion-footer.export-footer .export-button {
+      margin: 0;
+      width: 100%;
+    }
+
+    ion-popover.journal-menu {
+      --width: 220px;
+    }
+  `,
   template: `
     <ion-header>
       <ion-toolbar>
@@ -73,34 +94,35 @@ import { FabComponent } from '../../../shared/ui/fab/fab.component';
         </ion-buttons>
         <ion-title class="text-h3 pl-4">{{ store.journal()?.title ?? 'Журнал' }}</ion-title>
         <ion-buttons slot="end">
-          <ion-button id="journal-menu-button" aria-label="Меню журнала">
+          <ion-button id="journal-menu-button" aria-label="Меню журнала" fill="clear">
             <ion-icon slot="icon-only" [name]="menuIcon" />
           </ion-button>
-          <ion-popover trigger="journal-menu-button" triggerAction="click">
-            <div class="flex min-w-52 flex-col py-1">
-              <button
-                type="button"
-                class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-text)]"
-                [disabled]="store.isClosed()"
-                (click)="close()"
-              >
-                <ion-icon [name]="closeIcon" class="text-lg" aria-hidden="true" />
-                Закрыть журнал
-              </button>
-              <button
-                type="button"
-                class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-danger)]"
-                (click)="remove()"
-              >
-                <ion-icon [name]="trashIcon" class="text-lg" aria-hidden="true" />
-                Удалить журнал
-              </button>
-            </div>
-          </ion-popover>
         </ion-buttons>
       </ion-toolbar>
       <app-offline-banner [visible]="online.isOffline()" />
     </ion-header>
+
+    <ion-popover class="journal-menu" trigger="journal-menu-button" triggerAction="click">
+      <div class="flex min-w-52 flex-col py-1">
+        <button
+          type="button"
+          class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-text)]"
+          [disabled]="store.isClosed()"
+          (click)="close()"
+        >
+          <ion-icon [name]="closeIcon" class="text-lg" aria-hidden="true" />
+          Закрыть журнал
+        </button>
+        <button
+          type="button"
+          class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-danger)]"
+          (click)="remove()"
+        >
+          <ion-icon [name]="trashIcon" class="text-lg" aria-hidden="true" />
+          Удалить журнал
+        </button>
+      </div>
+    </ion-popover>
 
     <ion-content [fullscreen]="true">
       <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
@@ -218,25 +240,18 @@ import { FabComponent } from '../../../shared/ui/fab/fab.component';
     </ion-content>
 
     @if (store.journal() && !store.isClosed()) {
-      <div class="border-t border-[var(--color-border)] bg-[var(--color-bg)] px-screen-x pt-2 pb-4">
+      <ion-footer class="export-footer">
         <ion-button
           expand="block"
           fill="outline"
           color="primary"
-          class="h-11 font-semibold"
+          class="export-button h-11 font-semibold"
           (click)="exportPdf()"
         >
           <ion-icon slot="start" [name]="downloadIcon" aria-hidden="true" />
           Экспорт в PDF
         </ion-button>
-      </div>
-<!--      <ion-button-->
-<!--        class="fixed right-screen-x bottom-16 z-30 flex h-14 items-center gap-2 rounded-full bg-[var(&#45;&#45;color-accent)] px-4 font-semibold text-white shadow-lg"-->
-<!--        (click)="addEntry()"-->
-<!--      >-->
-<!--        <ion-icon name="add-outline" class="text-xl" aria-hidden="true" />-->
-<!--        Добавить запись-->
-<!--      </ion-button>-->
+      </ion-footer>
       <app-fab ariaLabel="Добавить запись" (click)="addEntry()"></app-fab>
     }
   `,

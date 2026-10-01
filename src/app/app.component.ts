@@ -64,9 +64,10 @@ interface TabButtonElement extends HTMLElement {
   `,
   styles: `
     ion-tab-bar {
-      --border: 1px solid var(--color-border, #e5e7eb);
+      --border: none;
       /* Высота панели вкладок задаётся токеном: на неё опирается app-fab. */
       height: var(--tab-bar-safe-height);
+      box-shadow: 0 -1px 3px rgb(15 23 42 / 8%);
     }
   `,
 })

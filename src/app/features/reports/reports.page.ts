@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { IonContent, IonHeader } from '@ionic/angular';
 
 /**
  * Отчёты — заглушка вкладки. В MVP раздел не входит (TZ 14), вкладка оставлена
@@ -8,12 +8,17 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
 @Component({
   selector: 'app-reports',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent],
+  imports: [IonHeader, IonContent],
+  styles: `
+    ion-header {
+      box-shadow: 0 1px 3px rgb(15 23 42 / 8%);
+    }
+  `,
   template: `
     <ion-header>
-      <ion-toolbar>
-        <ion-title class="pl-4">Отчёты</ion-title>
-      </ion-toolbar>
+      <div class="flex items-center justify-between px-screen-x py-3">
+        <h1 class="text-h2 text-[var(--color-text)]">Отчёты</h1>
+      </div>
     </ion-header>
     <ion-content [fullscreen]="true">
       <div class="p-screen-x py-between-sections text-body">

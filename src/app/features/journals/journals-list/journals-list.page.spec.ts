@@ -92,8 +92,10 @@ describe('JournalsListPage', () => {
   it('ведёт в журнал по ссылке карточки', () => {
     const { fixture } = setup([summary()]);
 
-    const link: HTMLAnchorElement = fixture.nativeElement.querySelector('a');
-    expect(link.getAttribute('href')).toBe('/journals/j-1');
+    const link: HTMLAnchorElement = fixture.nativeElement.querySelector(
+      'a[href="/journals/j-1"]',
+    );
+    expect(link).not.toBeNull();
   });
 
   it('всегда показывает FAB для создания журнала', () => {
