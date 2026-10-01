@@ -101,7 +101,7 @@ const APP_VERSION = '0.0.0';
                 <ion-button expand="block" fill="clear" color="medium" (click)="cancelEdit()">
                   Отмена
                 </ion-button>
-                <ion-button expand="block" [disabled]="saving()" (click)="save()">
+                <ion-button expand="block" color="primary" [disabled]="saving()" (click)="save()">
                   Сохранить
                 </ion-button>
               </div>

@@ -4,11 +4,13 @@ import {
   IonButton,
   IonButtons,
   IonContent,
+  IonDatetime,
   IonHeader,
   IonIcon,
   IonInput,
   IonTitle,
   IonToolbar,
+  type DatetimeCustomEvent,
   type InputCustomEvent,
 } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -36,6 +38,7 @@ import { SessionStore } from '../../../stores/session.store';
     IonButton,
     IonBackButton,
     IonContent,
+    IonDatetime,
     IonIcon,
     IonInput,
     FormFieldComponent,
@@ -132,18 +135,18 @@ import { SessionStore } from '../../../stores/session.store';
         </app-form-field>
 
         <app-form-field label="Дата начала" [required]="true" [error]="errors()['startedAt']">
-          <ion-input
+          <ion-datetime
             class="field-control"
-            [class.field-control-invalid]="errors()['startedAt']"
-            fill="outline"
-            type="date"
-            [value]="startedAt()"
-            (ionInput)="onStartedAt($event)"
+            presentation="date"
+            locale="ru"
+            [value]="startedAt() || null"
+            (ionChange)="onStartedAt($event)"
           />
         </app-form-field>
 
         <ion-button
           expand="block"
+          color="primary"
           class="h-13 text-body font-semibold"
           [disabled]="saving()"
           (click)="create()"
@@ -209,8 +212,8 @@ export class JournalCreatePage {
     this.clearError('responsiblePerson');
   }
 
-  protected onStartedAt(event: InputCustomEvent): void {
-    this.startedAt.set(event.detail.value ?? '');
+  protected onStartedAt(event: DatetimeCustomEvent): void {
+    this.startedAt.set(normalizeDate(event.detail.value) ?? '');
     this.clearError('startedAt');
   }
 
@@ -257,4 +260,12 @@ export class JournalCreatePage {
     delete next[field];
     this.errors.set(next);
   }
+}
+
+/** `ion-datetime` отдаёт ISO-дату; в модель кладём `YYYY-MM-DD` (ТЗ 5.1). */
+function normalizeDate(value: string | string[] | null | undefined): string | null {
+  if (typeof value !== 'string') {
+    return null;
+  }
+  return value.slice(0, 10);
 }

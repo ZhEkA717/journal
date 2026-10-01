@@ -221,7 +221,13 @@ import { FabComponent } from '../../../shared/ui/fab/fab.component';
 
     @if (store.journal() && !store.isClosed()) {
       <div class="border-t border-[var(--color-border)] bg-[var(--color-bg)] px-screen-x pt-2 pb-4">
-        <ion-button expand="block" fill="outline" class="h-11 font-semibold" (click)="exportPdf()">
+        <ion-button
+          expand="block"
+          fill="outline"
+          color="primary"
+          class="h-11 font-semibold"
+          (click)="exportPdf()"
+        >
           <ion-icon slot="start" [name]="downloadIcon" aria-hidden="true" />
           Экспорт в PDF
         </ion-button>

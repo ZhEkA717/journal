@@ -64,7 +64,7 @@ const DERIVED_KEYS: readonly string[] = ['employee', 'position'];
         </ion-buttons>
         <ion-title class="text-h3 pl-4">{{ isEditing ? 'Запись' : 'Новая запись' }}</ion-title>
         <ion-buttons slot="end">
-          <ion-button [disabled]="saving()" (click)="save()">Сохранить</ion-button>
+          <ion-button color="primary" [disabled]="saving()" (click)="save()">Сохранить</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -194,6 +194,7 @@ const DERIVED_KEYS: readonly string[] = ['employee', 'position'];
 
           <ion-button
             expand="block"
+            color="primary"
             class="h-13 text-body font-semibold"
             [disabled]="saving()"
             (click)="save()"
