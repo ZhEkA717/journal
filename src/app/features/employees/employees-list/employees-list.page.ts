@@ -87,9 +87,7 @@ import { EmployeesStore } from '../../../stores/employees.store';
           <app-empty-state
             icon="people-outline"
             title="Пока нет сотрудников"
-            description="Добавьте сотрудников, чтобы вести записи в журналах"
-            actionLabel="Добавить сотрудника"
-            (action)="openCreate()"
+            description="Нажмите + чтобы добавить"
           />
         } @else if (store.filtered().length === 0) {
           <app-empty-state
@@ -149,7 +147,7 @@ import { EmployeesStore } from '../../../stores/employees.store';
       </div>
     </ion-content>
 
-    <app-fab link="/employees/new" icon="add-outline" label="Добавить" />
+    <app-fab link="/employees/new" ariaLabel="Добавить сотрудника" />
   `,
 })
 export class EmployeesListPage {

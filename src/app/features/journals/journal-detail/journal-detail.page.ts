@@ -151,9 +151,7 @@ import { FabComponent } from '../../../shared/ui/fab/fab.component';
           <app-empty-state
             icon="create-outline"
             title="Нет записей"
-            description="Добавьте первую запись — она сохранится даже без интернета"
-            actionLabel="Добавить запись"
-            (action)="addEntry()"
+            description="Нажмите + чтобы добавить"
           />
         } @else {
           <div
@@ -239,7 +237,7 @@ import { FabComponent } from '../../../shared/ui/fab/fab.component';
 <!--        <ion-icon name="add-outline" class="text-xl" aria-hidden="true" />-->
 <!--        Добавить запись-->
 <!--      </ion-button>-->
-      <app-fab icon="add-outline" label="Добавить запись" (click)="addEntry()"></app-fab>
+      <app-fab ariaLabel="Добавить запись" (click)="addEntry()"></app-fab>
     }
   `,
 })

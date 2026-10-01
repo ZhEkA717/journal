@@ -73,9 +73,7 @@ import { Router, RouterLink } from '@angular/router';
           <app-empty-state
             icon="book-outline"
             title="Пока нет журналов"
-            description="Создайте первый журнал — это займёт 1 минуту"
-            actionLabel="Создать журнал"
-            (action)="create()"
+            description="Нажмите + чтобы добавить"
           />
         } @else {
           <div class="flex flex-col gap-between-cards">
@@ -139,9 +137,7 @@ import { Router, RouterLink } from '@angular/router';
       </div>
     </ion-content>
 
-    @if (store.hasJournals()) {
-      <app-fab link="/journals/create" icon="add-outline" label="Создать" />
-    }
+    <app-fab link="/journals/create" ariaLabel="Создать журнал" />
   `,
 })
 export class JournalsListPage {
@@ -156,6 +152,10 @@ export class JournalsListPage {
   protected readonly chevronIcon = 'chevron-forward-outline';
   /** Человекочитаемое название типа журнала. */
   protected readonly categoryLabel = categoryLabel;
+
+  constructor() {
+    void this.store.load();
+  }
 
   protected iconBackground(item: { readonly template?: { readonly color?: string } }): string {
     const color = item.template?.color;

@@ -15,7 +15,7 @@ export class ToastService {
       message,
       color,
       duration: durationMs,
-      position: 'top',
+      position: 'bottom',
       swipeGesture: 'vertical',
       buttons: [{ text: 'OK', role: 'cancel' }],
     });

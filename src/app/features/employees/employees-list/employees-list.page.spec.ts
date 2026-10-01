@@ -60,7 +60,7 @@ describe('EmployeesListPage', () => {
 
     const text: string = fixture.nativeElement.textContent;
     expect(text).toContain('Пока нет сотрудников');
-    expect(text).toContain('Добавьте сотрудников, чтобы вести записи в журналах');
+    expect(text).toContain('Нажмите + чтобы добавить');
   });
 
   it('показывает карточку сотрудника с инициалами и счётчиком', () => {

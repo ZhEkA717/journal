@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
+  type DatetimeCustomEvent,
   type InputCustomEvent,
   IonBackButton,
   IonButton,
   IonButtons,
   IonContent,
+  IonDatetime,
   IonHeader,
   IonInput,
   IonTitle,
@@ -34,6 +36,7 @@ import { EmployeesStore } from '../../../stores/employees.store';
     IonButton,
     IonBackButton,
     IonContent,
+    IonDatetime,
     IonInput,
     FormFieldComponent,
     SignaturePadComponent,
@@ -75,23 +78,22 @@ import { EmployeesStore } from '../../../stores/employees.store';
         </app-form-field>
 
         <app-form-field label="Дата приёма" [required]="true" [error]="errors()['hiredAt']">
-          <ion-input
+          <ion-datetime
             class="field-control"
-            [class.field-control-invalid]="errors()['hiredAt']"
-            fill="outline"
-            type="date"
-            [value]="hiredAt()"
-            (ionInput)="onHiredAt($event)"
+            presentation="date"
+            locale="ru"
+            [value]="hiredAt() || null"
+            (ionChange)="onHiredAt($event)"
           />
         </app-form-field>
 
         <app-form-field label="Дата рождения" hint="Необязательно">
-          <ion-input
+          <ion-datetime
             class="field-control"
-            fill="outline"
-            type="date"
-            [value]="birthDate()"
-            (ionInput)="onBirthDate($event)"
+            presentation="date"
+            locale="ru"
+            [value]="birthDate() || null"
+            (ionChange)="onBirthDate($event)"
           />
         </app-form-field>
 
@@ -165,13 +167,13 @@ export class EmployeeFormPage {
     this.clearError('position');
   }
 
-  protected onHiredAt(event: InputCustomEvent): void {
-    this.hiredAt.set(event.detail.value ?? '');
+  protected onHiredAt(event: DatetimeCustomEvent): void {
+    this.hiredAt.set(normalizeDate(event.detail.value) ?? '');
     this.clearError('hiredAt');
   }
 
-  protected onBirthDate(event: InputCustomEvent): void {
-    this.birthDate.set(event.detail.value ?? '');
+  protected onBirthDate(event: DatetimeCustomEvent): void {
+    this.birthDate.set(normalizeDate(event.detail.value) ?? '');
   }
 
   protected onSignature(signature: string): void {
@@ -246,4 +248,12 @@ export class EmployeeFormPage {
     delete next[field];
     this.errors.set(next);
   }
+}
+
+/** `ion-datetime` отдаёт ISO-дату; в модель кладём `YYYY-MM-DD` (ТЗ 5.1). */
+function normalizeDate(value: string | string[] | null | undefined): string | null {
+  if (typeof value !== 'string') {
+    return null;
+  }
+  return value.slice(0, 10);
 }

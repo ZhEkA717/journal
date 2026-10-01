@@ -18,12 +18,9 @@ describe('FabComponent', () => {
     }).compileComponents();
   });
 
-  function render(link = '/journals/new', label?: string) {
+  function render(link = '/journals/new') {
     const fixture = TestBed.createComponent(FabComponent);
     fixture.componentRef.setInput('link', link);
-    if (label !== undefined) {
-      fixture.componentRef.setInput('label', label);
-    }
     fixture.detectChanges();
     return fixture;
   }
@@ -46,12 +43,14 @@ describe('FabComponent', () => {
     expect(router.url).toBe('/journals/new');
   });
 
-  it('показывает иконку и подпись', () => {
-    const fixture = render('/journals/new', 'Новый журнал');
+  it('рендерит круглую кнопку с иконкой и aria-label', () => {
+    const fixture = render();
     const host: HTMLElement = fixture.nativeElement;
 
     expect(host.querySelector('ion-icon')).not.toBeNull();
-    expect(host.querySelector('ion-label')).not.toBeNull();
-    expect(host.textContent).toContain('Новый журнал');
+    const link = host.querySelector('a');
+    expect(link?.getAttribute('aria-label')).toBe('Добавить');
+    expect(link?.classList.contains('h-14')).toBe(true);
+    expect(link?.classList.contains('w-14')).toBe(true);
   });
 });

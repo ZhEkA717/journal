@@ -63,7 +63,7 @@ describe('JournalsListPage', () => {
 
     const text: string = fixture.nativeElement.textContent;
     expect(text).toContain('Пока нет журналов');
-    expect(text).toContain('Создайте первый журнал');
+    expect(text).toContain('Нажмите + чтобы добавить');
   });
 
   it('показывает карточки журналов со сводкой', () => {
@@ -96,13 +96,13 @@ describe('JournalsListPage', () => {
     expect(link.getAttribute('href')).toBe('/journals/j-1');
   });
 
-  it('показывает FAB только при наличии журналов', () => {
+  it('всегда показывает FAB для создания журнала', () => {
     const withJournals = setup([summary()]);
     expect(withJournals.fixture.nativeElement.querySelector('app-fab')).not.toBeNull();
 
     TestBed.resetTestingModule();
     const empty = setup([]);
-    expect(empty.fixture.nativeElement.querySelector('app-fab')).toBeNull();
+    expect(empty.fixture.nativeElement.querySelector('app-fab')).not.toBeNull();
   });
 
   it('перезагружает журналы по pull-to-refresh', async () => {
@@ -112,7 +112,7 @@ describe('JournalsListPage', () => {
     const event = { target: { complete } } as unknown as CustomEvent;
     await fixture.componentInstance['onRefresh'](event);
 
-    expect(store.load).toHaveBeenCalledTimes(1);
+    expect(store.load).toHaveBeenCalledTimes(2);
     expect(complete).toHaveBeenCalledTimes(1);
   });
 });
