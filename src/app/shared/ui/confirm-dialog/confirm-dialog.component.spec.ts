@@ -1,11 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { provideIonicAngular } from '@ionic/angular';
-import { IonModalToken } from '@ionic/angular/common';
+import { provideIonicAngular, ModalController } from '@ionic/angular';
 
 import { ConfirmDialogComponent } from './confirm-dialog.component';
 
 describe('ConfirmDialogComponent', () => {
-  const dismiss = vi.fn();
+  const dismiss = vi.fn().mockResolvedValue(undefined);
 
   beforeEach(async () => {
     dismiss.mockClear();
@@ -13,17 +12,17 @@ describe('ConfirmDialogComponent', () => {
       imports: [ConfirmDialogComponent],
       providers: [
         provideIonicAngular(),
-        { provide: IonModalToken, useValue: { dismiss } as unknown as HTMLIonModalElement },
+        { provide: ModalController, useValue: { dismiss } },
       ],
     }).compileComponents();
   });
 
   function render() {
     const fixture = TestBed.createComponent(ConfirmDialogComponent);
-    fixture.componentRef.setInput('title', 'Удалить запись?');
-    fixture.componentRef.setInput('message', 'Действие нельзя отменить.');
-    fixture.componentRef.setInput('danger', true);
-    fixture.componentRef.setInput('confirmText', 'Удалить');
+    fixture.componentInstance.title = 'Удалить запись?';
+    fixture.componentInstance.message = 'Действие нельзя отменить.';
+    fixture.componentInstance.danger = true;
+    fixture.componentInstance.confirmText = 'Удалить';
     fixture.detectChanges();
     return fixture;
   }
@@ -34,19 +33,21 @@ describe('ConfirmDialogComponent', () => {
     expect(text).toContain('Действие нельзя отменить.');
   });
 
-  it('закрывает модалку с подтверждением', () => {
+  it('закрывает модалку с подтверждением', async () => {
     const fixture = render();
     const buttons = fixture.nativeElement.querySelectorAll('ion-button');
 
     buttons[1].click();
+    await fixture.whenStable();
 
     expect(dismiss).toHaveBeenCalledWith(true, 'confirmed');
   });
 
-  it('закрывает модалку с отменой', () => {
+  it('закрывает модалку с отменой', async () => {
     const fixture = render();
 
     fixture.nativeElement.querySelectorAll('ion-button')[0].click();
+    await fixture.whenStable();
 
     expect(dismiss).toHaveBeenCalledWith(false, 'cancelled');
   });

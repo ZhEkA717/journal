@@ -77,8 +77,10 @@ describe('EmployeesListPage', () => {
   it('ведёт в карточку по ссылке', () => {
     const { fixture } = setup([employee()]);
 
-    const link: HTMLAnchorElement = fixture.nativeElement.querySelector('a');
-    expect(link.getAttribute('href')).toBe('/employees/e-1/edit');
+    const link: HTMLAnchorElement = fixture.nativeElement.querySelector(
+      'a[href="/employees/e-1/edit"]',
+    );
+    expect(link).not.toBeNull();
   });
 
   it('передаёт запрос в store и сбрасывает его вместе с поиском', () => {

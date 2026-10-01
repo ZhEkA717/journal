@@ -22,8 +22,6 @@ export class ConfirmDialogService {
     const modal = await this.modalController.create({
       component: ConfirmDialogComponent,
       componentProps: { ...options },
-      breakpoints: [0, 0.4],
-      initialBreakpoint: 0.4,
     });
     await modal.present();
     const { data } = await modal.onWillDismiss<boolean>();

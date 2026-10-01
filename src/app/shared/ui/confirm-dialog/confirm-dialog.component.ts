@@ -1,72 +1,58 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import {
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonFooter,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-} from '@ionic/angular';
-import { IonModalToken } from '@ionic/angular/common';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { IonButton, ModalController } from '@ionic/angular';
 
 /**
  * Модальное окно подтверждения действия (ТЗ 8.4, 8.7).
- * Внутри `ion-modal` получает ссылку на модалку через `IonModalToken` и закрывает
- * её с результатом: `true` — подтверждено, `false` — отменено.
+ * Закрывается через `ModalController.dismiss`, результат (`true`/`false`)
+ * передаётся в `data`.
  */
 @Component({
   selector: 'app-confirm-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IonHeader, IonToolbar, IonTitle, IonButtons, IonContent, IonFooter, IonButton],
+  imports: [IonButton],
   template: `
-    <ion-header>
-      <ion-toolbar>
-        <ion-title class="pl-4">{{ title() }}</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="ion-padding">
-      <p class="text-body text-[var(--color-text)]">{{ message() }}</p>
-    </ion-content>
-    <ion-footer class="ion-no-border">
-      <ion-toolbar class="ion-padding">
-        <ion-buttons slot="start">
-          <ion-button class="rounded-button" (click)="cancel()">{{ cancelText() }}</ion-button>
-        </ion-buttons>
-        <ion-buttons slot="end">
-          <ion-button
-            class="rounded-button"
-            [color]="danger() ? 'danger' : 'primary'"
-            (click)="confirm()"
-          >
-            {{ confirmText() }}
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-footer>
+    <div class="flex h-full w-full flex-col gap-6 bg-[var(--color-surface)] p-6">
+      <div>
+        <h2 class="text-h3 text-[var(--color-text)]">{{ title }}</h2>
+        <p class="mt-2 text-body text-[var(--color-text-muted)]">{{ message }}</p>
+      </div>
+      <div class="mt-auto flex gap-3">
+        <ion-button expand="block" fill="clear" color="medium" class="flex-1" (click)="cancel()">
+          {{ cancelText }}
+        </ion-button>
+        <ion-button
+          expand="block"
+          class="flex-1"
+          [color]="danger ? 'danger' : 'primary'"
+          (click)="confirm()"
+        >
+          {{ confirmText }}
+        </ion-button>
+      </div>
+    </div>
   `,
 })
 export class ConfirmDialogComponent {
   /** Заголовок окна. */
-  readonly title = input.required<string>();
+  @Input() title = '';
   /** Пояснение, что именно произойдёт. */
-  readonly message = input.required<string>();
+  @Input() message = '';
   /** Подпись кнопки подтверждения. */
-  readonly confirmText = input('Подтвердить');
+  @Input() confirmText = 'Подтвердить';
   /** Подпись кнопки отмены. */
-  readonly cancelText = input('Отмена');
+  @Input() cancelText = 'Отмена';
   /** Красная кнопка подтверждения — для удаления. */
-  readonly danger = input(false);
+  @Input() danger = false;
 
-  private readonly modal = inject(IonModalToken, { optional: true });
+  private readonly modalCtrl = inject(ModalController);
 
   /** Подтверждает действие. */
-  confirm(): void {
-    void this.modal?.dismiss(true, 'confirmed');
+  async confirm(): Promise<void> {
+    await this.modalCtrl.dismiss(true, 'confirmed');
   }
 
   /** Отменяет действие. */
-  cancel(): void {
-    void this.modal?.dismiss(false, 'cancelled');
+  async cancel(): Promise<void> {
+    await this.modalCtrl.dismiss(false, 'cancelled');
   }
 }

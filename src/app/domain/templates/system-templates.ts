@@ -7,7 +7,7 @@ import type { JournalTemplate } from '../journals/journal-template.model';
 export const SYSTEM_TEMPLATES: readonly Omit<JournalTemplate, 'createdAt' | 'updatedAt'>[] = [
   {
     id: 'sys-fire-safety',
-    name: 'Журнал инструктажа по пожарной безопасности',
+    name: 'Журнал инструктажа по ПБ',
     category: 'fire_safety',
     iconName: 'flame-outline',
     color: '#DC2626',
@@ -30,7 +30,7 @@ export const SYSTEM_TEMPLATES: readonly Omit<JournalTemplate, 'createdAt' | 'upd
   },
   {
     id: 'sys-labor-safety',
-    name: 'Журнал инструктажа по охране труда',
+    name: 'Журнал учета охраны труда',
     category: 'labor_safety',
     iconName: 'shield-checkmark-outline',
     color: '#1E40AF',

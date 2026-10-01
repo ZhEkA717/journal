@@ -84,6 +84,7 @@ import { FabComponent } from '../../../shared/ui/fab/fab.component';
 
     ion-popover.journal-menu {
       --width: 220px;
+      --max-width: 90vw;
     }
   `,
   template: `
@@ -102,8 +103,13 @@ import { FabComponent } from '../../../shared/ui/fab/fab.component';
       <app-offline-banner [visible]="online.isOffline()" />
     </ion-header>
 
-    <ion-popover class="journal-menu" trigger="journal-menu-button" triggerAction="click">
-      <div class="flex min-w-52 flex-col py-1">
+    <ion-popover
+      class="journal-menu"
+      trigger="journal-menu-button"
+      triggerAction="click"
+      style="--width: 220px; --max-width: 90vw;"
+    >
+      <div class="flex w-full flex-col py-1">
         <button
           type="button"
           class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-text)]"
