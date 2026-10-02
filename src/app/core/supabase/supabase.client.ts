@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 import { environment } from '../../../environments/environment';
+import { createSupabaseStorage } from './supabase.storage';
 import type { Database } from './supabase.types';
 
 /**
@@ -8,10 +9,15 @@ import type { Database } from './supabase.types';
  *
  * Возвращает `null`, пока в `environment` не заполнены ключи проекта:
  * приложение обязано работать офлайн и без настроенного Supabase (ТЗ 12.5).
+ * Сессия хранится в Capacitor Preferences (ТЗ 9.4, 10.3).
  */
 export function createSupabaseClient(): SupabaseClient<Database> | null {
   if (environment.supabaseUrl.length === 0 || environment.supabaseAnonKey.length === 0) {
     return null;
   }
-  return createClient<Database>(environment.supabaseUrl, environment.supabaseAnonKey);
+  return createClient<Database>(environment.supabaseUrl, environment.supabaseAnonKey, {
+    auth: {
+      storage: createSupabaseStorage(),
+    },
+  });
 }

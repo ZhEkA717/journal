@@ -11,8 +11,8 @@ Angular 22 + Ionic 9 + Tailwind CSS 4 приложение для ведения
 Планируется разбить работу на задачи T1–T12 (каркас → данные → shared → экраны →
 Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит критериев готовности).
 Текущее состояние: **T1 (каркас), T2 (слой данных), T3 (shared), T4 (stores и
-экраны ТЗ 8.1–8.7), T5 (Supabase/Auth), T6 (Sync) и T7 (PDF) завершены**.
-Следующая — T8 (PWA/Capacitor).
+экраны ТЗ 8.1–8.7), T5 (Supabase/Auth), T6 (Sync), T7 (PDF) и T8 (PWA/Capacitor)
+завершены**. Следующая — T9 (тесты).
 
 Что уже есть в слое данных:
 
@@ -98,6 +98,32 @@ Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит �
   экспортированы для тестов; `@types/node` добавлен в devDep (тесты читают TTF из
   node_modules), `tsconfig.spec.json` — `types: ["vitest/globals", "node"]`
 
+Что уже есть в PWA/Capacitor (ТЗ 10):
+
+- `ngsw-config.json` в корне — конфиг ТЗ 10.1 + `/fonts/**` (TTF для PDF);
+  `serviceWorker` включён только в `configurations.production` angular.json,
+  регистрация — `provideServiceWorker('ngsw-worker.js')` под `!isDevMode()` в
+  `app.config.ts` (в dev worker-файла нет — не регистрируй его там)
+- `public/manifest.webmanifest` (theme `#1E40AF`, icons — SVG + PNG), ссылки
+  (`manifest`, `theme-color`, `apple-touch-icon`) — в `src/index.html`
+- Иконки PNG: `npm run icons` → `scripts/generate-icons.mjs` рендерит фигуры
+  favicon.svg в `src/assets/icons/` (192, 512, maskable-512); в angular.json
+  `src/assets` копируется с `output: "assets"` — путь в manifest не сломается
+- `capacitor.config.ts` в корне — конфиг ТЗ 10.2 (`webDir: 'www'`); сборка идёт
+  в `www/` (`outputPath: {base: 'www', browser: ''}`, папка в .gitignore); платформы
+  `android/` и `ios/` добавлены (`npx cap add`), после `npm run build` — `npx cap sync`
+- `core/native/native.service.ts` — `impact()` (вибро при сохранении записи,
+  ТЗ 8.5.3) и `init()` (цвет статус-бара, вызывается из `provideAppInitializer`);
+  в браузере всё тихо no-op (плагины без моста кидают `unimplemented`)
+- `core/supabase/supabase.storage.ts` — сессия Supabase в Capacitor Preferences
+  (ТЗ 9.4, 10.3): `createSupabaseClient` передаёт `auth.storage`; при первом чтении
+  ключ мигрируется из старого localStorage, чтобы не потерять анонимного юзера
+- `sharePdf` (ТЗ 10.3): на нативе — `Filesystem.writeFile` в `Directory.Cache` +
+  `Share.share`; отмена в share sheet («Share canceled») превращается в
+  `AbortError`, чтобы UI не показывал тост; в вебе — Web Share → download
+- Плагины из ТЗ 10.3 установлены: haptics, share, filesystem, preferences,
+  keyboard (resize: body в конфиге), status-bar — `cap add` нашёл все шесть
+
 Что уже есть в stores и экранах (ТЗ 3, 8.1–8.7):
 
 - `stores/session.store.ts` — организация устройства, онбординг, `organizationId`
@@ -119,6 +145,8 @@ Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит �
 | ------------ | ------------------- |
 | Dev-сервер   | `npm start`         |
 | Сборка       | `npm run build`     |
+| Синк Capacitor | `npx cap sync`    |
+| Иконки PNG   | `npm run icons`     |
 | Тесты        | `npm test`          |
 | Линт         | `npm run lint`      |
 | Типы         | `npm run typecheck` |
@@ -131,14 +159,20 @@ Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит �
 - `src/main.ts` — entrypoint, вызывает `bootstrapApplication(AppComponent, appConfig)`
 - `src/app/app.component.ts` — оболочка: `IonApp` + `IonRouterOutlet` + ручной `ion-tab-bar`
 - `src/app/app.config.ts` — провайдеры: zoneless, роутер, `provideIonicAngular`, HTTP,
-  `SupabaseClient`, инициализация `SyncService`
+  `SupabaseClient`, инициализация `SyncService`, регистрация SW в prod
 - `src/app/app.routes.ts` — маршруты и константа вкладок `APP_TABS`
-- `src/app/core/` — синглтоны и инфраструктура: `db`, `sync`, `supabase`, `pdf`, `auth`, `date`, `storage`
+- `src/app/core/` — синглтоны и инфраструктура: `db`, `sync`, `supabase`, `pdf`,
+  `auth`, `date`, `storage`, `native`
 - `src/app/domain/` — модели, репозитории, доменные сервисы
 - `src/app/features/<feature>/<screen>/` — экраны (smart components)
 - `src/app/shared/` — dumb-компоненты, пайпы, утилиты
 - `src/app/**/tests/` — юнит-тесты: `*.spec.ts` лежат только в папке `tests/`
   рядом с тестируемым файлом (в каждой папке — своя, в ней может быть несколько спек)
+- `public/` — favicon, `manifest.webmanifest`; `src/assets/icons/` — PNG-иконки PWA
+- `ngsw-config.json`, `capacitor.config.ts` — в корне; `android/`, `ios/` — платформы
+  Capacitor (в git входят, web-assets копируются `npx cap sync`), `www/` — сборка
+  (в .gitignore)
+- `scripts/generate-icons.mjs` — генератор PNG-иконок (`npm run icons`)
 - `src/environments/` — dev/prod-конфигурация, тип в `environment.model.ts`
 - `src/test-setup.ts` — `fake-indexeddb/auto` для тестов слоя данных (vitest)
 - `src/theme/variables.scss` — Ionic CSS-переменные

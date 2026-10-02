@@ -21,6 +21,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { DateService } from '../../../core/date/date.service';
+import { NativeService } from '../../../core/native/native.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { FormFieldComponent } from '../../../shared/ui/form-field/form-field.component';
 import { SignaturePadComponent } from '../../../shared/ui/signature-pad/signature-pad.component';
@@ -65,6 +66,7 @@ export class EntryFormPage {
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
   private readonly date = inject(DateService);
+  private readonly native = inject(NativeService);
 
   private readonly journalId = this.route.snapshot.paramMap.get('id') ?? '';
   private readonly entryId = this.route.snapshot.paramMap.get('entryId') ?? '';
@@ -152,6 +154,8 @@ export class EntryFormPage {
       } else {
         await this.store.addEntry({ journalId: this.journalId, employeeId, data: payload });
       }
+      // Haptic feedback после сохранения (ТЗ 8.5.3).
+      await this.native.impact();
       await this.toast.success('Запись сохранена');
       await this.router.navigateByUrl(this.backHref, { replaceUrl: true });
     } catch (error) {

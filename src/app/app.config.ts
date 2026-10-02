@@ -2,6 +2,7 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import {
   ApplicationConfig,
   inject,
+  isDevMode,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
@@ -14,10 +15,12 @@ import {
   withNavigationErrorHandler,
   withPreloading,
 } from '@angular/router';
+import { provideServiceWorker } from '@angular/service-worker';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 import { routes } from './app.routes';
+import { NativeService } from './core/native/native.service';
 import { SyncService } from './core/sync/sync.service';
 import { createSupabaseClient } from './core/supabase/supabase.client';
 
@@ -40,6 +43,10 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       inject(SyncService);
     }),
+    // Цвет статус-бара при старте на нативных платформах (ТЗ 10.3).
+    provideAppInitializer(() => {
+      void inject(NativeService).init();
+    }),
     // `swipeBackEnabled` в `mode: 'md'` выключен по умолчанию — включаем явно.
     // При свайпе жест водит штатную транзицию сам, а после pop() Ionic играл её же
     // повторно (вниз + fade) — двойная анимация; `navAnimation` гасит только повтор.
@@ -47,5 +54,13 @@ export const appConfig: ApplicationConfig = {
       mode: 'ios',
     }),
     provideHttpClient(withFetch()),
+    // PWA (ТЗ 10.1): worker есть только в prod-сборке, в dev его не отдают.
+    ...(isDevMode()
+      ? []
+      : [
+          provideServiceWorker('ngsw-worker.js', {
+            registrationStrategy: 'registerWhenStable:30000',
+          }),
+        ]),
   ],
 };

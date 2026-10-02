@@ -1,6 +1,9 @@
 import { readFileSync } from 'node:fs';
 
 import { TestBed } from '@angular/core/testing';
+import { Capacitor } from '@capacitor/core';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 import { PDFDocument } from 'pdf-lib';
 
 import type { JournalEntry } from '../../../domain/journals/journal-entry.model';
@@ -13,6 +16,14 @@ import {
   PdfGeneratorService,
   resolveColumnWidths,
 } from '../pdf-generator.service';
+
+vi.mock('@capacitor/filesystem', () => ({
+  Directory: { Cache: 'CACHE' },
+  Filesystem: { writeFile: vi.fn() },
+}));
+vi.mock('@capacitor/share', () => ({
+  Share: { share: vi.fn() },
+}));
 
 const REGULAR_TTF = readFileSync(
   'node_modules/@expo-google-fonts/roboto/400Regular/Roboto_400Regular.ttf',
@@ -317,5 +328,52 @@ describe('PdfGeneratorService.sharePdf', () => {
     expect(createObjectURL).toHaveBeenCalledTimes(1);
     expect(click).toHaveBeenCalledTimes(1);
     click.mockRestore();
+  });
+});
+
+describe('PdfGeneratorService.sharePdf на нативной платформе', () => {
+  let nativeSpy: { mockRestore(): void };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(Filesystem.writeFile).mockResolvedValue({ uri: 'file:///cache/journal.pdf' });
+    vi.mocked(Share.share).mockResolvedValue({});
+    nativeSpy = vi.spyOn(Capacitor, 'isNativePlatform').mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    nativeSpy.mockRestore();
+  });
+
+  it('записывает PDF во временную папку и зовёт нативный share', async () => {
+    const { service } = setup();
+
+    await service.sharePdf(new Uint8Array([37, 80, 68, 70]), 'журнал.pdf');
+
+    expect(Filesystem.writeFile).toHaveBeenCalledWith(
+      expect.objectContaining({ path: 'журнал.pdf', directory: Directory.Cache }),
+    );
+    expect(Share.share).toHaveBeenCalledWith({
+      files: ['file:///cache/journal.pdf'],
+      title: 'журнал.pdf',
+    });
+  });
+
+  it('превращает отмену шеринга в AbortError, чтобы UI не показал тост', async () => {
+    vi.mocked(Share.share).mockRejectedValueOnce(new Error('Share canceled'));
+    const { service } = setup();
+
+    await expect(service.sharePdf(new Uint8Array([1]), 'ж.pdf')).rejects.toMatchObject({
+      name: 'AbortError',
+    });
+  });
+
+  it('прочие ошибки пробрасывает наружу', async () => {
+    vi.mocked(Share.share).mockRejectedValueOnce(new Error('Permission denied'));
+    const { service } = setup();
+
+    await expect(service.sharePdf(new Uint8Array([1]), 'ж.pdf')).rejects.toThrow(
+      'Permission denied',
+    );
   });
 });

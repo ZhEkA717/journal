@@ -1,4 +1,7 @@
 import { Injectable, inject } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 import fontkit from '@pdf-lib/fontkit';
 import { PDFDocument, type PDFFont, type PDFImage, type PDFPage, rgb } from 'pdf-lib';
 
@@ -83,12 +86,17 @@ export class PdfGeneratorService {
   }
 
   /**
-   * Отправляет PDF через нативный шеринг, а если его нет — скачивает файл
-   * (ТЗ 10.3: `@capacitor/share` подключается в задаче T8).
+   * Отправляет PDF: на нативной платформе — системный шеринг
+   * (`@capacitor/share` + `@capacitor/filesystem`, ТЗ 10.3), в вебе —
+   * Web Share API, иначе скачивание файла (ТЗ 9.3).
    */
   async sharePdf(bytes: Uint8Array, filename: string): Promise<void> {
     // Копия в чистый ArrayBuffer: Blob не принимает ArrayBufferLike.
     const buffer = toArrayBuffer(bytes);
+    if (Capacitor.isNativePlatform()) {
+      await this.sharePdfNative(buffer, filename);
+      return;
+    }
     const file = new File([buffer], filename, { type: 'application/pdf' });
     if (
       typeof navigator.share === 'function' &&
@@ -104,6 +112,28 @@ export class PdfGeneratorService {
     link.download = filename;
     link.click();
     setTimeout(() => URL.revokeObjectURL(blobUrl), 1_000);
+  }
+
+  /** Записывает PDF во временную папку и открывает системный share sheet. */
+  private async sharePdfNative(buffer: ArrayBuffer, filename: string): Promise<void> {
+    const written = await Filesystem.writeFile({
+      path: filename,
+      data: toBase64(new Uint8Array(buffer)),
+      directory: Directory.Cache,
+    });
+    try {
+      await Share.share({ files: [written.uri], title: filename });
+    } catch (error) {
+      // Отмена в share sheet («Share canceled» на Android) — не ошибка.
+      if (
+        String((error as Error | undefined)?.message ?? '')
+          .toLowerCase()
+          .includes('cancel')
+      ) {
+        throw new DOMException('Share canceled', 'AbortError');
+      }
+      throw error;
+    }
   }
 
   /** Загружает TTF из ассетов; результат кэшируется на весь цикл жизни. */
@@ -634,4 +664,14 @@ function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
   const copy = new Uint8Array(bytes.byteLength);
   copy.set(bytes);
   return copy.buffer;
+}
+
+/** base64 для @capacitor/filesystem; чанками, чтобы не упереться в лимит аргументов. */
+function toBase64(bytes: Uint8Array): string {
+  let binary = '';
+  const chunkSize = 0x8000;
+  for (let offset = 0; offset < bytes.length; offset += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(offset, offset + chunkSize));
+  }
+  return btoa(binary);
 }

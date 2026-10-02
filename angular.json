@@ -33,6 +33,11 @@
                 "input": "public"
               },
               {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
+              },
+              {
                 "glob": "Roboto_400Regular.ttf",
                 "input": "node_modules/@expo-google-fonts/roboto/400Regular",
                 "output": "fonts"
@@ -48,6 +53,10 @@
                 "output": "fonts"
               }
             ],
+            "outputPath": {
+              "base": "www",
+              "browser": ""
+            },
             "styles": [
               "node_modules/@ionic/angular/css/structure.css",
               "node_modules/@ionic/angular/css/core.css",
@@ -73,6 +82,7 @@
                 }
               ],
               "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
