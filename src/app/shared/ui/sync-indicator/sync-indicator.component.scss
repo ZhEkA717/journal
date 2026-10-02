@@ -1,0 +1,12 @@
+// В шапке (синий фон #1E40AF) иконка — квадрат 20×20 px, белый цвет.
+:host-context(ion-header) {
+  width: 20px;
+  height: 20px;
+}
+
+:host-context(ion-header) ion-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  color: var(--ion-color-primary-contrast) !important;
+}

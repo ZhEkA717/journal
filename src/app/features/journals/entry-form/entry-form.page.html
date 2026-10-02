@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title class="text-h3">{{ isEditing ? 'Запись' : 'Новая запись' }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button color="primary" [disabled]="saving()" (click)="save()">Сохранить</ion-button>
+      <ion-button class="save-btn" [disabled]="saving()" (click)="save()">Сохранить</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

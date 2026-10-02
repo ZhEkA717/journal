@@ -58,6 +58,7 @@ const DERIVED_KEYS: readonly string[] = ['employee', 'position'];
     SignaturePadComponent,
   ],
   templateUrl: './entry-form.page.html',
+  styleUrl: './entry-form.page.scss',
 })
 export class EntryFormPage {
   /** Данные журнала, шаблон и сотрудники. */

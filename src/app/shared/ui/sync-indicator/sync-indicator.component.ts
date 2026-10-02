@@ -26,6 +26,7 @@ const STATE_COLOR: Readonly<Record<SyncIndicatorState, string>> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonIcon],
   templateUrl: './sync-indicator.component.html',
+  styleUrl: './sync-indicator.component.scss',
 })
 export class SyncIndicatorComponent {
   /** Состояние синхронизации. */
