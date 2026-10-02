@@ -8,6 +8,26 @@ ion-footer.export-footer {
 }
 
 ion-footer.export-footer .export-button {
-  margin: 0;
+  margin: 0 0 24px;
   width: 100%;
+}
+
+.journal-menu {
+  /* Дефолт popover 200px (iOS) / 250px (MD) — мало для пунктов меню. */
+  --width: 260px;
+
+  /* ion-content с height:100% растягивается в popover и даёт вертикальный скролл. */
+  ion-content {
+    height: auto;
+    overflow: hidden;
+  }
+
+  /* Отступы inset-списка выталкивают контент и включают скролл в popover. */
+  ion-list {
+    margin: 0;
+  }
+}
+
+.journal-menu ion-icon[slot='start'] {
+  margin-inline-end: 12px;
 }

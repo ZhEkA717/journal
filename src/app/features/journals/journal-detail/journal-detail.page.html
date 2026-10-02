@@ -20,33 +20,28 @@
   triggerAction="click"
 >
   <ng-template>
-    <div class="flex w-full flex-col py-1">
-      <button
-        type="button"
-        class="flex items-center gap-3 px-4 py-3 whitespace-nowrap text-body text-[var(--color-text)]"
-        (click)="edit()"
-      >
-        <ion-icon [name]="editIcon" class="text-lg" aria-hidden="true" />
-        Редактировать
-      </button>
-      <button
-        type="button"
-        class="flex items-center gap-3 px-4 py-3 whitespace-nowrap text-body text-[var(--color-text)]"
-        [disabled]="store.isClosed()"
-        (click)="close()"
-      >
-        <ion-icon [name]="closeIcon" class="text-lg" aria-hidden="true" />
-        Закрыть
-      </button>
-      <button
-        type="button"
-        class="flex items-center gap-3 px-4 py-3 whitespace-nowrap text-body text-[var(--color-danger)]"
-        (click)="remove()"
-      >
-        <ion-icon [name]="trashIcon" class="text-lg" aria-hidden="true" />
-        Удалить
-      </button>
-    </div>
+    <ion-content>
+      <ion-list>
+        <ion-item [button]="true" [detail]="false" lines="none" (click)="edit()">
+          <ion-icon slot="start" [name]="editIcon" aria-hidden="true" />
+          <ion-label class="whitespace-nowrap">Редактировать</ion-label>
+        </ion-item>
+        <ion-item
+          [button]="true"
+          [detail]="false"
+          lines="none"
+          [disabled]="store.isClosed()"
+          (click)="close()"
+        >
+          <ion-icon slot="start" [name]="closeIcon" aria-hidden="true" />
+          <ion-label class="whitespace-nowrap">Закрыть</ion-label>
+        </ion-item>
+        <ion-item [button]="true" [detail]="false" lines="none" color="danger" (click)="remove()">
+          <ion-icon slot="start" [name]="trashIcon" aria-hidden="true" />
+          <ion-label class="whitespace-nowrap">Удалить</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
   </ng-template>
 </ion-popover>
 

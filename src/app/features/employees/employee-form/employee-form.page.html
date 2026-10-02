@@ -60,24 +60,28 @@
       <app-signature-pad [signature]="signature()" (signatureChange)="onSignature($event)" />
     </app-form-field>
 
-    @if (isEditing()) {
-      @if (employee()?.firedAt) {
-        <ion-button expand="block" color="medium" (click)="rehire()">Вернуть на работу</ion-button>
-      } @else {
-        <ion-button expand="block" color="danger" fill="outline" (click)="fire()"
-          >Уволить</ion-button
-        >
+    <div class="flex flex-col gap-2">
+      @if (isEditing()) {
+        @if (employee()?.firedAt) {
+          <ion-button expand="block" color="medium" (click)="rehire()"
+            >Вернуть на работу</ion-button
+          >
+        } @else {
+          <ion-button expand="block" color="danger" fill="outline" (click)="fire()"
+            >Уволить</ion-button
+          >
+        }
       }
-    }
 
-    <ion-button
-      expand="block"
-      class="h-13 text-body font-semibold"
-      [disabled]="saving()"
-      (click)="save()"
-      color="primary"
-    >
-      {{ saving() ? 'Сохраняем…' : 'Сохранить' }}
-    </ion-button>
+      <ion-button
+        expand="block"
+        class="h-13 text-body font-semibold"
+        [disabled]="saving()"
+        (click)="save()"
+        color="primary"
+      >
+        {{ saving() ? 'Сохраняем…' : 'Сохранить' }}
+      </ion-button>
+    </div>
   </div>
 </ion-content>
