@@ -94,6 +94,7 @@ export class JournalDetailPage {
 
   protected readonly menuIcon = 'ellipsis-vertical-outline';
   protected readonly closeIcon = 'close-outline';
+  protected readonly editIcon = 'create-outline';
   protected readonly trashIcon = 'trash-outline';
   protected readonly downloadIcon = 'download-outline';
   protected readonly signedIcon = 'checkmark-circle-outline';
@@ -120,6 +121,11 @@ export class JournalDetailPage {
     void this.router.navigate(['/journals', this.journalId, 'entries', 'new']);
   }
 
+  /** Открывает форму редактирования данных журнала (ТЗ 14: редактирование). */
+  protected edit(): void {
+    void this.router.navigate(['/journals', this.journalId, 'edit']);
+  }
+
   protected editEntry(entryId: string): void {
     void this.router.navigate(this.entryLink(entryId));
   }
@@ -128,7 +134,7 @@ export class JournalDetailPage {
   protected async close(): Promise<void> {
     const confirmed = await this.confirm.confirm({
       title: 'Закрыть журнал?',
-      message: 'Новые записи добавить не получится. Действие можно отменить позже.',
+      message: 'Новые записи добавить не получится.',
       confirmText: 'Закрыть',
     });
     if (!confirmed) {

@@ -15,6 +15,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { DateService } from '../../../core/date/date.service';
+import { ConfirmDialogService } from '../../../shared/ui/confirm-dialog/confirm-dialog.service';
 import { FormFieldComponent } from '../../../shared/ui/form-field/form-field.component';
 import { SignaturePadComponent } from '../../../shared/ui/signature-pad/signature-pad.component';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
@@ -23,7 +24,8 @@ import { EmployeesStore } from '../../../stores/employees.store';
 
 /**
  * Форма сотрудника: ФИО, должность, даты и эталонная подпись (ТЗ 8.6).
- * По маршруту `employees/new` создаёт карточку, `employees/:id/edit` — правит её.
+ * По маршруту `employees/new` создаёт карточку, `employees/:id/edit` — правит её;
+ * оттуда же увольняют и возвращают в штат (ТЗ 14: CRUD).
  */
 @Component({
   selector: 'app-employee-form',
@@ -49,6 +51,7 @@ export class EmployeeFormPage {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly confirm = inject(ConfirmDialogService);
   private readonly date = inject(DateService);
 
   private readonly employeeId = this.route.snapshot.paramMap.get('id') ?? '';
@@ -136,10 +139,30 @@ export class EmployeeFormPage {
   /** Снимает отметку об увольнении. */
   protected async rehire(): Promise<void> {
     try {
-      await this.store.restore(this.employeeId);
+      const employee = await this.store.restore(this.employeeId);
+      this.employee.set(employee);
       await this.toast.success('Сотрудник снова в штате');
     } catch (error) {
       await this.toast.error(errorMessage(error, 'Не удалось вернуть сотрудника'));
+    }
+  }
+
+  /** Помечает сотрудника уволенным: он остаётся в записях журнала (ТЗ 8.6). */
+  protected async fire(): Promise<void> {
+    const confirmed = await this.confirm.confirm({
+      title: 'Уволить сотрудника?',
+      message: 'Он останется в прошлых записях, но исчезнет из списка для новых.',
+      confirmText: 'Уволить',
+    });
+    if (!confirmed) {
+      return;
+    }
+    try {
+      const employee = await this.store.fire(this.employeeId);
+      this.employee.set(employee);
+      await this.toast.success('Сотрудник уволен');
+    } catch (error) {
+      await this.toast.error(errorMessage(error, 'Не удалось уволить сотрудника'));
     }
   }
 

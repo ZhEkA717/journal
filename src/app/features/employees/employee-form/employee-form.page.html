@@ -60,8 +60,14 @@
       <app-signature-pad [signature]="signature()" (signatureChange)="onSignature($event)" />
     </app-form-field>
 
-    @if (isEditing() && employee()?.firedAt) {
-      <ion-button expand="block" color="medium" (click)="rehire()">Вернуть на работу</ion-button>
+    @if (isEditing()) {
+      @if (employee()?.firedAt) {
+        <ion-button expand="block" color="medium" (click)="rehire()">Вернуть на работу</ion-button>
+      } @else {
+        <ion-button expand="block" color="danger" fill="outline" (click)="fire()"
+          >Уволить</ion-button
+        >
+      }
     }
 
     <ion-button

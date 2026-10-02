@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
 
 /**
- * Отчёты — заглушка вкладки. В MVP раздел не входит (TZ 14), вкладка оставлена
- * как точка входа для будущего этапа.
+ * Отчёты — заглушка вкладки. В MVP раздел не входит (ТЗ 15: backlog), вкладка
+ * оставлена по ТЗ 8.2 как точка входа для будущей аналитики.
  */
 @Component({
   selector: 'app-reports',

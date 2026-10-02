@@ -23,20 +23,28 @@
     <div class="flex w-full flex-col py-1">
       <button
         type="button"
-        class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-text)]"
+        class="flex items-center gap-3 px-4 py-3 whitespace-nowrap text-body text-[var(--color-text)]"
+        (click)="edit()"
+      >
+        <ion-icon [name]="editIcon" class="text-lg" aria-hidden="true" />
+        Редактировать
+      </button>
+      <button
+        type="button"
+        class="flex items-center gap-3 px-4 py-3 whitespace-nowrap text-body text-[var(--color-text)]"
         [disabled]="store.isClosed()"
         (click)="close()"
       >
         <ion-icon [name]="closeIcon" class="text-lg" aria-hidden="true" />
-        Закрыть журнал
+        Закрыть
       </button>
       <button
         type="button"
-        class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-danger)]"
+        class="flex items-center gap-3 px-4 py-3 whitespace-nowrap text-body text-[var(--color-danger)]"
         (click)="remove()"
       >
         <ion-icon [name]="trashIcon" class="text-lg" aria-hidden="true" />
-        Удалить журнал
+        Удалить
       </button>
     </div>
   </ng-template>

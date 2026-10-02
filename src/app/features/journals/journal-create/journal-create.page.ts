@@ -13,7 +13,7 @@ import {
   type DatetimeCustomEvent,
   type InputCustomEvent,
 } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import type { JournalTemplate } from '../../../domain/journals/journal-template.model';
 import { DateService } from '../../../core/date/date.service';
@@ -25,7 +25,8 @@ import { SessionStore } from '../../../stores/session.store';
 
 /**
  * Создание журнала: выбор типа из системных шаблонов, название, ответственный
- * и дата начала (ТЗ 8.3).
+ * и дата начала (ТЗ 8.3). При наличии `:id` в маршруте — редактирование
+ * существующего журнала (критерий ТЗ 14), тип при этом не меняется.
  */
 @Component({
   selector: 'app-journal-create',
@@ -49,8 +50,13 @@ export class JournalCreatePage {
   protected readonly store = inject(JournalsStore);
   private readonly session = inject(SessionStore);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
   private readonly date = inject(DateService);
+
+  /** Редактирование существующего журнала, если в маршруте есть `:id`. */
+  protected readonly journalId = this.route.snapshot.paramMap.get('id');
+  protected readonly editMode = this.journalId !== null;
 
   /** Выбранный шаблон журнала. */
   protected readonly selectedTemplateId = signal('');
@@ -74,7 +80,11 @@ export class JournalCreatePage {
 
   constructor() {
     this.responsiblePerson.set(this.session.organization()?.responsiblePerson ?? '');
-    void this.ensureTemplates();
+    if (this.editMode) {
+      void this.loadJournal();
+    } else {
+      void this.ensureTemplates();
+    }
   }
 
   /** Выбирает тип журнала и подставляет его название. */
@@ -105,8 +115,8 @@ export class JournalCreatePage {
     this.clearError('startedAt');
   }
 
-  /** Создаёт журнал и открывает его. */
-  protected async create(): Promise<void> {
+  /** Создаёт или сохраняет журнал и открывает его. */
+  protected async save(): Promise<void> {
     if (this.saving()) {
       return;
     }
@@ -123,13 +133,42 @@ export class JournalCreatePage {
     }
     this.saving.set(true);
     try {
-      const journal = await this.store.create(draft);
-      await this.toast.success('Журнал создан');
-      await this.router.navigate(['/journals', journal.id], { replaceUrl: true });
+      if (this.editMode) {
+        const journal = await this.store.update(this.journalId!, draft);
+        await this.toast.success('Журнал сохранён');
+        await this.router.navigate(['/journals', journal.id]);
+      } else {
+        const journal = await this.store.create(draft);
+        await this.toast.success('Журнал создан');
+        await this.router.navigate(['/journals', journal.id], { replaceUrl: true });
+      }
     } catch (error) {
-      await this.toast.error(errorMessage(error, 'Не удалось создать журнал'));
+      await this.toast.error(
+        errorMessage(
+          error,
+          this.editMode ? 'Не удалось сохранить журнал' : 'Не удалось создать журнал',
+        ),
+      );
     } finally {
       this.saving.set(false);
+    }
+  }
+
+  /** Загружает журнал и заполняет форму в режиме редактирования. */
+  private async loadJournal(): Promise<void> {
+    try {
+      const journal = await this.store.get(this.journalId!);
+      if (!journal) {
+        await this.toast.error('Журнал не найден');
+        await this.router.navigateByUrl('/journals', { replaceUrl: true });
+        return;
+      }
+      this.selectedTemplateId.set(journal.templateId);
+      this.title.set(journal.title);
+      this.responsiblePerson.set(journal.responsiblePerson);
+      this.startedAt.set(journal.startedAt);
+    } catch (error) {
+      await this.toast.error(errorMessage(error, 'Не удалось загрузить журнал'));
     }
   }
 

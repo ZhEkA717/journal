@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { provideIonicAngular } from '@ionic/angular';
 
+import { AuthService } from '../../../core/auth/auth.service';
 import { LocalDataService } from '../../../core/storage/local-data.service';
 import { OnlineStatusService } from '../../../core/sync/online-status.service';
 import { SyncQueueService } from '../../../core/sync/sync-queue.service';
@@ -25,7 +26,7 @@ describe('SettingsPage', () => {
     syncStatus: 'pending',
   };
 
-  function setup(overrides: { offline?: boolean } = {}) {
+  function setup(overrides: { offline?: boolean; user?: { email?: string | null } | null } = {}) {
     const session = {
       organization: signal<Organization | undefined>(organization),
       validate: vi.fn(() => ({})),
@@ -45,6 +46,12 @@ describe('SettingsPage', () => {
       syncAll: vi.fn().mockResolvedValue({ pushed: 0, pulled: 0 }),
     };
     const localData = { wipe: vi.fn().mockResolvedValue(undefined) };
+    const auth = {
+      currentUser: signal<{ email?: string | null } | null>(overrides.user ?? null),
+      configured: true,
+      linkAnonymousToEmail: vi.fn().mockResolvedValue(undefined),
+      signInWithEmail: vi.fn().mockResolvedValue(undefined),
+    };
     const confirm = {
       remove: vi.fn().mockResolvedValue(false),
       confirm: vi.fn().mockResolvedValue(false),
@@ -70,6 +77,7 @@ describe('SettingsPage', () => {
         { provide: LocalDataService, useValue: localData },
         { provide: ConfirmDialogService, useValue: confirm },
         { provide: ToastService, useValue: toast },
+        { provide: AuthService, useValue: auth },
       ],
     });
     const realRouter = TestBed.inject(Router);
@@ -77,7 +85,7 @@ describe('SettingsPage', () => {
     vi.spyOn(realRouter, 'navigate').mockImplementation(router.navigate);
     const fixture = TestBed.createComponent(SettingsPage);
     fixture.detectChanges();
-    return { fixture, session, online, queue, sync, localData, confirm, toast, router };
+    return { fixture, session, online, queue, sync, localData, confirm, toast, router, auth };
   }
 
   beforeEach(() => {
@@ -204,5 +212,62 @@ describe('SettingsPage', () => {
     await fixture.componentInstance['logout']();
 
     expect(toast.error).toHaveBeenCalledWith('idb locked');
+  });
+
+  it('строка аккаунта показывает привязанный email (ТЗ 9.4)', () => {
+    const { fixture } = setup({ user: { email: 'owner@example.com' } });
+
+    expect(fixture.nativeElement.textContent).toContain('owner@example.com');
+  });
+
+  it('linkEmail не уходит без корректного email', async () => {
+    const { fixture, auth, toast } = setup();
+    const component = fixture.componentInstance;
+    component['toggleEmailEdit']();
+    component['email'].set('не-почта');
+
+    await component['linkEmail']();
+
+    expect(component['emailError']()).toBe('Укажите корректный email');
+    expect(auth.linkAnonymousToEmail).not.toHaveBeenCalled();
+    expect(toast.success).not.toHaveBeenCalled();
+  });
+
+  it('linkEmail привязывает email и показывает тост', async () => {
+    const { fixture, auth, toast } = setup();
+    const component = fixture.componentInstance;
+    component['toggleEmailEdit']();
+    component['email'].set('owner@example.com');
+
+    await component['linkEmail']();
+
+    expect(auth.linkAnonymousToEmail).toHaveBeenCalledWith('owner@example.com');
+    expect(toast.success).toHaveBeenCalledWith('Код подтверждения отправлен на почту');
+    expect(component['emailEditing']()).toBe(false);
+  });
+
+  it('sendSignInLink отправляет ссылку входа на другое устройство', async () => {
+    const { fixture, auth, toast } = setup();
+    const component = fixture.componentInstance;
+    component['toggleEmailEdit']();
+    component['email'].set(' owner@example.com ');
+
+    await component['sendSignInLink']();
+
+    expect(auth.signInWithEmail).toHaveBeenCalledWith('owner@example.com');
+    expect(toast.success).toHaveBeenCalledWith('Ссылка для входа отправлена на почту');
+  });
+
+  it('ошибка привязки email показывается тостом, linking сбрасывается', async () => {
+    const { fixture, auth, toast } = setup();
+    const component = fixture.componentInstance;
+    component['toggleEmailEdit']();
+    component['email'].set('owner@example.com');
+    auth.linkAnonymousToEmail.mockRejectedValue(new Error('boom'));
+
+    await component['linkEmail']();
+
+    expect(toast.error).toHaveBeenCalledWith('boom');
+    expect(component['linking']()).toBe(false);
   });
 });

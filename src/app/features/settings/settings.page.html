@@ -142,7 +142,52 @@
           <span class="text-body text-[var(--color-text)]">Синхронизировать сейчас</span>
           <ion-icon [name]="chevronIcon" class="text-sm text-[var(--color-border)]" />
         </button>
+        <button
+          type="button"
+          class="flex w-full items-center justify-between border-t border-[var(--color-border)] px-inside-card py-3.5 text-left"
+          (click)="toggleEmailEdit()"
+        >
+          <span class="text-body text-[var(--color-text)]">Аккаунт (email)</span>
+          <span class="flex items-center gap-2">
+            <span class="max-w-45 truncate text-small text-[var(--color-text-muted)]">
+              {{ auth.configured ? (accountEmail() ?? 'Не привязан') : 'Supabase не настроен' }}
+            </span>
+            <ion-icon [name]="chevronIcon" class="text-sm text-[var(--color-border)]" />
+          </span>
+        </button>
       </div>
+      @if (emailEditing() && auth.configured) {
+        <div class="card-surface mt-2 flex flex-col gap-between-cards p-inside-card">
+          <app-form-field label="Email" [error]="emailError()">
+            <ion-input
+              class="field-control field-control_bg"
+              fill="outline"
+              inputmode="email"
+              placeholder="user@example.com"
+              [value]="email()"
+              (ionInput)="onEmail($event)"
+            />
+          </app-form-field>
+          <div class="flex gap-between-cards">
+            <ion-button
+              expand="block"
+              fill="outline"
+              color="medium"
+              [disabled]="linking()"
+              (click)="sendSignInLink()"
+            >
+              Ссылка входа
+            </ion-button>
+            <ion-button expand="block" color="primary" [disabled]="linking()" (click)="linkEmail()">
+              {{ linking() ? 'Отправляем…' : 'Привязать' }}
+            </ion-button>
+          </div>
+          <p class="text-tiny text-[var(--color-text-muted)]">
+            Привяжите email на устройстве с данными — на другом устройстве войдите по «Ссылке входа»
+            с тем же адресом, и данные синхронизируются.
+          </p>
+        </div>
+      }
       @if (syncing()) {
         <div class="mt-2 flex justify-center">
           <ion-spinner name="crescent" />

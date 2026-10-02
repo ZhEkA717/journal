@@ -13,6 +13,7 @@ import {
 import { Router } from '@angular/router';
 
 import { DateService } from '../../core/date/date.service';
+import { AuthService } from '../../core/auth/auth.service';
 import { LocalDataService } from '../../core/storage/local-data.service';
 import { OnlineStatusService } from '../../core/sync/online-status.service';
 import { SyncQueueService } from '../../core/sync/sync-queue.service';
@@ -27,6 +28,9 @@ import { chevronForwardOutline, cloudDoneOutline, cloudOfflineOutline } from 'io
 
 /** Версия приложения из `package.json` (ТЗ 8.7). */
 const APP_VERSION = '0.0.0';
+
+/** Простая проверка email перед отправкой в Supabase (ТЗ 9.4). */
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * Настройки: реквизиты организации, состояние синхронизации и выход из
@@ -58,6 +62,7 @@ export class SettingsPage {
   private readonly confirm = inject(ConfirmDialogService);
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
+  protected readonly auth = inject(AuthService);
 
   /** Редактируются ли реквизиты организации. */
   protected readonly editing = signal(false);
@@ -84,6 +89,17 @@ export class SettingsPage {
   });
   /** Версия приложения. */
   protected readonly version = APP_VERSION;
+
+  /** Привязанный email аккаунта Supabase (ТЗ 9.4). */
+  protected readonly accountEmail = computed(() => this.auth.currentUser()?.email ?? null);
+  /** Открыта ли форма привязки email. */
+  protected readonly emailEditing = signal(false);
+  /** Значение поля email. */
+  protected readonly email = signal('');
+  /** Ошибка поля email. */
+  protected readonly emailError = signal('');
+  /** Идёт отправка кода/ссылки. */
+  protected readonly linking = signal(false);
 
   protected readonly chevronIcon = 'chevron-forward-outline';
   protected readonly onlineIcon = 'cloud-done-outline';
@@ -171,6 +187,62 @@ export class SettingsPage {
       await this.toast.error(errorMessage(error, 'Синхронизация не удалась'));
     } finally {
       this.syncing.set(false);
+    }
+  }
+
+  /** Открывает/закрывает форму привязки email (ТЗ 9.4). */
+  protected toggleEmailEdit(): void {
+    this.emailEditing.update((open) => !open);
+    this.emailError.set('');
+  }
+
+  protected onEmail(event: InputCustomEvent): void {
+    this.email.set(event.detail.value ?? '');
+    this.emailError.set('');
+  }
+
+  /**
+   * Привязывает email к текущей (анонимной) сессии: Supabase отправит код
+   * подтверждения — после него с этого email можно входить на других
+   * устройствах (ТЗ 9.4, критерий ТЗ 14 о смене устройства).
+   */
+  protected async linkEmail(): Promise<void> {
+    await this.withEmail(async (value) => {
+      await this.auth.linkAnonymousToEmail(value);
+      await this.toast.success('Код подтверждения отправлен на почту');
+      this.emailEditing.set(false);
+    }, 'Не удалось привязать email');
+  }
+
+  /** Отправляет ссылку входа на email — для входа на другом устройстве (ТЗ 9.4). */
+  protected async sendSignInLink(): Promise<void> {
+    await this.withEmail(async (value) => {
+      await this.auth.signInWithEmail(value);
+      await this.toast.success('Ссылка для входа отправлена на почту');
+      this.emailEditing.set(false);
+    }, 'Не удалось отправить ссылку входа');
+  }
+
+  /** Общая обёртка: валидация email, флаг `linking` и тост ошибки. */
+  private async withEmail(
+    action: (value: string) => Promise<void>,
+    fallback: string,
+  ): Promise<void> {
+    if (this.linking()) {
+      return;
+    }
+    const value = this.email().trim();
+    if (!EMAIL_PATTERN.test(value)) {
+      this.emailError.set('Укажите корректный email');
+      return;
+    }
+    this.linking.set(true);
+    try {
+      await action(value);
+    } catch (error) {
+      await this.toast.error(errorMessage(error, fallback));
+    } finally {
+      this.linking.set(false);
     }
   }
 

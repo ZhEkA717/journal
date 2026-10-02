@@ -47,6 +47,14 @@ export const routes: Routes = [
     title: 'Новый журнал',
   },
   {
+    path: 'journals/:id/edit',
+    loadComponent: () =>
+      import('./features/journals/journal-create/journal-create.page').then(
+        (m) => m.JournalCreatePage,
+      ),
+    title: 'Редактирование журнала',
+  },
+  {
     path: 'journals/:id/entries/new',
     loadComponent: () =>
       import('./features/journals/entry-form/entry-form.page').then((m) => m.EntryFormPage),

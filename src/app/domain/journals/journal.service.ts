@@ -54,6 +54,11 @@ export class JournalService {
     return journal ? this.buildSummary(journal) : undefined;
   }
 
+  /** Журнал по идентификатору (для экрана редактирования). */
+  async get(id: string): Promise<Journal | undefined> {
+    return this.journals.getById(id);
+  }
+
   /** Проверяет форму создания журнала. */
   validate(draft: JournalDraft): FieldErrors {
     const errors: Record<string, string> = {};

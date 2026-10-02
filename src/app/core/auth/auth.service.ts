@@ -21,6 +21,11 @@ export class AuthService {
   /** Текущий пользователь Supabase или `null`, если сессии нет. */
   readonly currentUser = signal<User | null>(null);
 
+  /** Настроен ли Supabase — заполнены ли ключи проекта в environment. */
+  get configured(): boolean {
+    return this.supabase !== null;
+  }
+
   constructor() {
     this.supabase?.auth.onAuthStateChange((_event, session) => {
       this.currentUser.set(session?.user ?? null);

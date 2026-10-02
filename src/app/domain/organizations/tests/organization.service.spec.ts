@@ -46,9 +46,15 @@ describe('OrganizationService', () => {
     expect(await db.organizations.get(organization.id)).toBeTruthy();
 
     const queueItems = await queue.list();
-    expect(queueItems).toHaveLength(1);
+    // Организация + три системных шаблона из сида — все ждут отправки.
+    expect(queueItems).toHaveLength(4);
     expect(queueItems[0]?.entityType).toBe('organization');
     expect(queueItems[0]?.action).toBe('create');
+    expect(queueItems.slice(1).map((item) => item.entityType)).toEqual([
+      'template',
+      'template',
+      'template',
+    ]);
   });
 
   it('загружает системные шаблоны при создании', async () => {

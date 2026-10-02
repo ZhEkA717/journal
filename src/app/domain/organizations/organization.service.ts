@@ -3,6 +3,8 @@ import { Injectable, inject } from '@angular/core';
 import { AppDatabase } from '../../core/db/app-db';
 import { seedSystemTemplates } from '../../core/db/seed';
 import { DateService } from '../../core/date/date.service';
+import { SyncQueueService } from '../../core/sync/sync-queue.service';
+import { SYSTEM_TEMPLATES } from '../templates/system-templates';
 import type { FieldErrors } from '../validation.model';
 import type { Organization, OrganizationDraft } from './organization.model';
 import { OrganizationRepository } from './organization.repository';
@@ -15,6 +17,7 @@ export class OrganizationService {
   private readonly repository = inject(OrganizationRepository);
   private readonly db = inject(AppDatabase);
   private readonly date = inject(DateService);
+  private readonly queue = inject(SyncQueueService);
 
   /** Проверяет данные онбординга: поля не пустые, минимум 2 символа (TZ 8.1). */
   validate(draft: OrganizationDraft): FieldErrors {
@@ -43,7 +46,23 @@ export class OrganizationService {
       inn: this.normalizeOptional(draft.inn),
       address: this.normalizeOptional(draft.address),
     });
-    await seedSystemTemplates(this.db, this.date.nowTimestamp());
+    const created = await seedSystemTemplates(this.db, this.date.nowTimestamp());
+    // Сид пишет в Dexie напрямую, поэтому сами шаблоны ставим в очередь здесь:
+    // без этого на втором устройстве не придут шаблоны и журналы окажутся без
+    // колонок (ТЗ 14: синхронизация при смене устройства).
+    if (created > 0) {
+      for (const { id } of SYSTEM_TEMPLATES) {
+        const template = await this.db.templates.get(id);
+        if (template) {
+          await this.queue.enqueue({
+            entityType: 'template',
+            entityId: id,
+            action: 'create',
+            payload: template,
+          });
+        }
+      }
+    }
     return organization;
   }
 

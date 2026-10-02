@@ -75,6 +75,11 @@ export const JournalsStore = signalStore(
         return journal;
       },
 
+      /** Журнал для экрана редактирования. */
+      async get(id: string): Promise<Journal | undefined> {
+        return journalService.get(id);
+      },
+
       /** Закрывает журнал (ТЗ 8.4, меню журнала). */
       async close(id: string): Promise<Journal> {
         const journal = await journalService.close(id);

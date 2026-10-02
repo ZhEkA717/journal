@@ -4,6 +4,8 @@ import { provideRouter, Router } from '@angular/router';
 import { provideIonicAngular } from '@ionic/angular';
 
 import type { Employee } from '../../../../domain/employees/employee.model';
+import { ConfirmDialogService } from '../../../../shared/ui/confirm-dialog/confirm-dialog.service';
+import { ToastService } from '../../../../shared/ui/toast/toast.service';
 import { EmployeesStore } from '../../../../stores/employees.store';
 import { EmployeesListPage } from '../employees-list.page';
 
@@ -31,9 +33,19 @@ describe('EmployeesListPage', () => {
       employees: signal(items),
       filtered: signal(items),
       load: vi.fn().mockResolvedValue(undefined),
+      remove: vi.fn().mockResolvedValue(undefined),
       setQuery: (value: string) => query.set(value),
       query,
       instructionsOf: () => (id: string) => counts.get(id) ?? 0,
+    };
+    const toast = {
+      success: vi.fn().mockResolvedValue(undefined),
+      error: vi.fn().mockResolvedValue(undefined),
+      show: vi.fn().mockResolvedValue(undefined),
+    };
+    const confirm = {
+      confirm: vi.fn().mockResolvedValue(true),
+      remove: vi.fn().mockResolvedValue(true),
     };
     TestBed.configureTestingModule({
       imports: [EmployeesListPage],
@@ -44,11 +56,13 @@ describe('EmployeesListPage', () => {
           { path: 'employees/new', children: [] },
         ]),
         { provide: EmployeesStore, useValue: store },
+        { provide: ToastService, useValue: toast },
+        { provide: ConfirmDialogService, useValue: confirm },
       ],
     });
     const fixture = TestBed.createComponent(EmployeesListPage);
     fixture.detectChanges();
-    return { fixture, store };
+    return { fixture, store, toast, confirm };
   }
 
   beforeEach(() => {
@@ -110,5 +124,33 @@ describe('EmployeesListPage', () => {
     await fixture.whenStable();
 
     expect(router.url).toBe('/employees/new');
+  });
+
+  it('карточку оборачивает свайп с опциями Редактировать/Удалить (ТЗ 8.6)', () => {
+    const { fixture } = setup([employee()]);
+
+    const options: Element[] = Array.from(
+      fixture.nativeElement.querySelectorAll('ion-item-option'),
+    );
+    const labels = options.map((option) => option.textContent?.trim());
+    expect(labels).toEqual(['Редактировать', 'Удалить']);
+  });
+
+  it('удаление сотрудника после подтверждения вызывает store.remove', async () => {
+    const { fixture, store, toast } = setup([employee()]);
+
+    await fixture.componentInstance['removeEmployee']('e-1');
+
+    expect(store.remove).toHaveBeenCalledWith('e-1');
+    expect(toast.success).toHaveBeenCalledWith('Сотрудник удалён');
+  });
+
+  it('отмена подтверждения не удаляет сотрудника', async () => {
+    const { fixture, store, confirm } = setup([employee()]);
+    confirm.remove.mockResolvedValue(false);
+
+    await fixture.componentInstance['removeEmployee']('e-1');
+
+    expect(store.remove).not.toHaveBeenCalled();
   });
 });

@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { provideIonicAngular } from '@ionic/angular';
 
 import type { Employee } from '../../../../domain/employees/employee.model';
+import { ConfirmDialogService } from '../../../../shared/ui/confirm-dialog/confirm-dialog.service';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
 import { EmployeesStore } from '../../../../stores/employees.store';
 import { EmployeeFormPage } from '../employee-form.page';
@@ -29,11 +30,16 @@ describe('EmployeeFormPage', () => {
       create: vi.fn().mockResolvedValue(employee),
       update: vi.fn().mockResolvedValue(employee),
       restore: vi.fn().mockResolvedValue(employee),
+      fire: vi.fn().mockResolvedValue({ ...employee, firedAt: '2026-10-02' }),
     };
     const toast = {
       success: vi.fn().mockResolvedValue(undefined),
       error: vi.fn().mockResolvedValue(undefined),
       show: vi.fn().mockResolvedValue(undefined),
+    };
+    const confirm = {
+      confirm: vi.fn().mockResolvedValue(true),
+      remove: vi.fn().mockResolvedValue(true),
     };
     const router = {
       navigateByUrl: vi.fn().mockResolvedValue(true),
@@ -50,6 +56,7 @@ describe('EmployeeFormPage', () => {
         { provide: EmployeesStore, useValue: store },
         { provide: ActivatedRoute, useValue: route },
         { provide: ToastService, useValue: toast },
+        { provide: ConfirmDialogService, useValue: confirm },
       ],
     });
     const realRouter = TestBed.inject(Router);
@@ -57,7 +64,7 @@ describe('EmployeeFormPage', () => {
     vi.spyOn(realRouter, 'navigate').mockImplementation(router.navigate);
     const fixture = TestBed.createComponent(EmployeeFormPage);
     fixture.detectChanges();
-    return { fixture, store, toast, router };
+    return { fixture, store, toast, router, confirm };
   }
 
   beforeEach(() => {
@@ -97,6 +104,27 @@ describe('EmployeeFormPage', () => {
     await fixture.componentInstance['rehire']();
     expect(store.restore).toHaveBeenCalledWith('e-1');
     expect(toast.success).toHaveBeenCalledWith('Сотрудник снова в штате');
+  });
+
+  it('уволение спрашивает подтверждение и вызывает store.fire', async () => {
+    const { fixture, store, toast, confirm } = setup('e-1');
+    await vi.waitFor(() => expect(store.load).toHaveBeenCalledTimes(1));
+
+    await fixture.componentInstance['fire']();
+
+    expect(confirm.confirm).toHaveBeenCalled();
+    expect(store.fire).toHaveBeenCalledWith('e-1');
+    expect(toast.success).toHaveBeenCalledWith('Сотрудник уволен');
+  });
+
+  it('отменённое увольнение не трогает store', async () => {
+    const { fixture, store, confirm } = setup('e-1');
+    await vi.waitFor(() => expect(store.load).toHaveBeenCalledTimes(1));
+    confirm.confirm.mockResolvedValue(false);
+
+    await fixture.componentInstance['fire']();
+
+    expect(store.fire).not.toHaveBeenCalled();
   });
 
   it('создаёт нового сотрудника и уходит в список', async () => {
