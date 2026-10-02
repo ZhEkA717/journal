@@ -33,8 +33,8 @@ Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит �
 - `shared/ui/signature-pad/` — рисование подписи пальцем (signature_pad) → PNG base64
 - `shared/ui/empty-state/`, `shared/ui/offline-banner/`, `shared/ui/sync-indicator/`
 - `shared/ui/toast/toast.service.ts` — обёртка над `ToastController`
-- `shared/ui/confirm-dialog/` — компонент + `ConfirmDialogService` поверх `ModalController`
-  (внутри модалки компонент получает ссылку через `IonModalToken` из `@ionic/angular/common`)
+- `shared/ui/confirm-dialog/confirm-dialog.service.ts` — `ConfirmDialogService` поверх
+  `ActionSheetController` (`header` + `subHeader` + кнопки `role: 'confirm'` / `role: 'cancel'`)
 - `shared/utils/uuid.ts` (UUID v4), `shared/utils/date.utils.ts` (`isIsoDate`)
 
 Что уже есть в stores и экранах (ТЗ 3, 8.1–8.7):
