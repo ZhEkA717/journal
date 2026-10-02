@@ -74,6 +74,8 @@ Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит �
 - `src/app/domain/` — модели, репозитории, доменные сервисы
 - `src/app/features/<feature>/<screen>/` — экраны (smart components)
 - `src/app/shared/` — dumb-компоненты, пайпы, утилиты
+- `src/app/**/tests/` — юнит-тесты: `*.spec.ts` лежат только в папке `tests/`
+  рядом с тестируемым файлом (в каждой папке — своя, в ней может быть несколько спек)
 - `src/environments/` — dev/prod-конфигурация, тип в `environment.model.ts`
 - `src/test-setup.ts` — `fake-indexeddb/auto` для тестов слоя данных (vitest)
 - `src/theme/variables.scss` — Ionic CSS-переменные
@@ -94,6 +96,7 @@ Moment.js, `any` в публичных API, хардкод цветов вне �
 - Dumb-компоненты: `feature-name.component.ts`
 - Сервисы: `feature-name.service.ts`, репозитории: `feature-name.repository.ts`
 - Модели: `feature-name.model.ts`
+- Тесты: `<имя тестируемого файла>.spec.ts` в папке `tests/` рядом с ним
 
 ## Правила, которые легко нарушить
 
