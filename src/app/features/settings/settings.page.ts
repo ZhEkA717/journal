@@ -6,6 +6,8 @@ import {
   IonIcon,
   IonInput,
   IonSpinner,
+  IonTitle,
+  IonToolbar,
   type InputCustomEvent,
 } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -33,6 +35,8 @@ const APP_VERSION = '0.0.0';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IonHeader,
+    IonToolbar,
+    IonTitle,
     IonContent,
     IonButton,
     IonIcon,
@@ -40,16 +44,11 @@ const APP_VERSION = '0.0.0';
     IonSpinner,
     FormFieldComponent,
   ],
-  styles: `
-    ion-header {
-      box-shadow: 0 1px 3px rgb(15 23 42 / 8%);
-    }
-  `,
   template: `
     <ion-header>
-      <div class="flex items-center justify-between px-screen-x py-3">
-        <h1 class="text-h2 text-[var(--color-text)]">Настройки</h1>
-      </div>
+      <ion-toolbar>
+        <ion-title>Настройки</ion-title>
+      </ion-toolbar>
     </ion-header>
 
     <ion-content [fullscreen]="true">

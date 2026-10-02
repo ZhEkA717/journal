@@ -47,7 +47,7 @@ import { EmployeesStore } from '../../../stores/employees.store';
         <ion-buttons slot="start">
           <ion-back-button defaultHref="/employees" text="" />
         </ion-buttons>
-        <ion-title class="text-h3 pl-4">{{
+        <ion-title class="text-h3">{{
           isEditing() ? 'Сотрудник' : 'Новый сотрудник'
         }}</ion-title>
       </ion-toolbar>

@@ -49,7 +49,7 @@ import { SessionStore } from '../../../stores/session.store';
         <ion-buttons slot="start">
           <ion-back-button defaultHref="/journals" text="" />
         </ion-buttons>
-        <ion-title class="text-h2 pl-4">Новый журнал</ion-title>
+        <ion-title class="text-h2">Новый журнал</ion-title>
       </ion-toolbar>
     </ion-header>
 

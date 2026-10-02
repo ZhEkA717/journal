@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
+  IonButton,
+  IonButtons,
   IonContent,
   IonHeader,
   IonIcon,
@@ -7,6 +9,8 @@ import {
   IonRefresherContent,
   IonSearchbar,
   IonSpinner,
+  IonTitle,
+  IonToolbar,
   type SearchbarCustomEvent,
 } from '@ionic/angular';
 import { Router, RouterLink } from '@angular/router';
@@ -28,6 +32,10 @@ import { EmployeesStore } from '../../../stores/employees.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
     IonContent,
     IonIcon,
     IonRefresher,
@@ -41,24 +49,21 @@ import { EmployeesStore } from '../../../stores/employees.store';
     FabComponent,
     OfflineBannerComponent,
   ],
-  styles: `
-    ion-header {
-      box-shadow: 0 1px 3px rgb(15 23 42 / 8%);
-    }
-  `,
   template: `
     <ion-header>
-      <div class="flex items-center justify-between px-screen-x py-3">
-        <h1 class="text-h2 text-[var(--color-text)]">Сотрудники</h1>
-        <a
-          href="#"
-          (click)="toggleSearch(); $event.preventDefault()"
-          [attr.aria-label]="searchButtonLabel"
-          class="flex h-[22px] w-[22px] items-center justify-center text-[var(--color-text-muted)]"
-        >
-          <ion-icon [name]="searchIcon" class="text-[22px]" aria-hidden="true" />
-        </a>
-      </div>
+      <ion-toolbar>
+        <ion-title>Сотрудники</ion-title>
+        <ion-buttons slot="end">
+          <ion-button
+            fill="clear"
+            (click)="toggleSearch()"
+            [attr.aria-label]="searchButtonLabel"
+            class="text-[var(--color-text-muted)]"
+          >
+            <ion-icon slot="icon-only" [name]="searchIcon" aria-hidden="true" />
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
       @if (searchVisible()) {
         <ion-searchbar
           placeholder="Поиск по имени или должности"
