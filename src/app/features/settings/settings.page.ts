@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import {
   IonButton,
   IonContent,
@@ -12,9 +12,11 @@ import {
 } from '@ionic/angular';
 import { Router } from '@angular/router';
 
+import { DateService } from '../../core/date/date.service';
 import { LocalDataService } from '../../core/storage/local-data.service';
 import { OnlineStatusService } from '../../core/sync/online-status.service';
 import { SyncQueueService } from '../../core/sync/sync-queue.service';
+import { SyncService } from '../../core/sync/sync.service';
 import { ConfirmDialogService } from '../../shared/ui/confirm-dialog/confirm-dialog.service';
 import { FormFieldComponent } from '../../shared/ui/form-field/form-field.component';
 import { ToastService } from '../../shared/ui/toast/toast.service';
@@ -50,6 +52,8 @@ export class SettingsPage {
   private readonly session = inject(SessionStore);
   protected readonly online = inject(OnlineStatusService);
   private readonly queue = inject(SyncQueueService);
+  private readonly sync = inject(SyncService);
+  private readonly date = inject(DateService);
   private readonly localData = inject(LocalDataService);
   private readonly confirm = inject(ConfirmDialogService);
   private readonly toast = inject(ToastService);
@@ -73,6 +77,11 @@ export class SettingsPage {
   protected readonly organization = this.session.organization;
   /** Размер очереди синхронизации. */
   protected readonly queueSize = this.queue.size;
+  /** Человекочитаемое время последней синхронизации (ТЗ 8.7). */
+  protected readonly lastSyncText = computed(() => {
+    const timestamp = this.sync.lastSyncAt();
+    return timestamp === null ? 'Ещё не выполнялась' : this.date.humanize(timestamp);
+  });
   /** Версия приложения. */
   protected readonly version = APP_VERSION;
 
@@ -143,18 +152,26 @@ export class SettingsPage {
     }
   }
 
-  /** Синхронизация появится в задаче T6; сейчас только отчёт о состоянии. */
+  /** Ручная синхронизация: полный цикл отправки и приёма (ТЗ 8.7, 9.2). */
   protected async syncNow(): Promise<void> {
     if (this.syncing()) {
       return;
     }
     this.syncing.set(true);
-    await this.online.ping();
-    this.syncing.set(false);
-    await this.toast.show(
-      this.online.isOffline() ? 'Нет подключения к интернету' : 'Синхронизация появится позже',
-      this.online.isOffline() ? 'warning' : 'dark',
-    );
+    try {
+      const summary = await this.sync.syncAll();
+      if (summary.pushed === 0 && summary.pulled === 0) {
+        await this.toast.show('Нет изменений для синхронизации', 'dark');
+      } else {
+        await this.toast.success(
+          `Синхронизировано: отправлено ${summary.pushed}, получено ${summary.pulled}`,
+        );
+      }
+    } catch (error) {
+      await this.toast.error(errorMessage(error, 'Синхронизация не удалась'));
+    } finally {
+      this.syncing.set(false);
+    }
   }
 
   /** Выход: подтверждение, очистка локальной базы и возврат на онбординг. */

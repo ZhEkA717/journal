@@ -43,15 +43,11 @@
               [name]="template.iconName"
               class="text-2xl"
               [style.color]="
-                template.id === selectedTemplateId()
-                  ? template.color
-                  : 'var(--color-text-muted)'
+                template.id === selectedTemplateId() ? template.color : 'var(--color-text-muted)'
               "
               aria-hidden="true"
             />
-            <span
-              class="text-small text-center leading-snug font-medium text-[var(--color-text)]"
-            >
+            <span class="text-small text-center leading-snug font-medium text-[var(--color-text)]">
               {{ template.name }}
             </span>
           </button>
@@ -74,11 +70,7 @@
       />
     </app-form-field>
 
-    <app-form-field
-      label="Ответственный"
-      [required]="true"
-      [error]="errors()['responsiblePerson']"
-    >
+    <app-form-field label="Ответственный" [required]="true" [error]="errors()['responsiblePerson']">
       <ion-input
         class="field-control"
         [class.field-control-invalid]="errors()['responsiblePerson']"

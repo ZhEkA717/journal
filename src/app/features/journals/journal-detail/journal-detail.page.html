@@ -60,9 +60,7 @@
       (action)="backToList()"
     />
   } @else {
-    <div
-      class="border-b border-[var(--color-border)] bg-[var(--color-surface)] px-screen-x py-3"
-    >
+    <div class="border-b border-[var(--color-border)] bg-[var(--color-surface)] px-screen-x py-3">
       <p class="text-small text-[var(--color-text-muted)]">
         @if (store.isClosed()) {
           Закрыт {{ store.journal()?.closedAt | dateRu }} · Ответственный:

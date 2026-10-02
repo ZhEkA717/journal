@@ -112,15 +112,11 @@
           <span class="flex items-center gap-2 text-small">
             <ion-icon
               [name]="online.isOffline() ? offlineIcon : onlineIcon"
-              [style.color]="
-                online.isOffline() ? 'var(--color-warning)' : 'var(--color-success)'
-              "
+              [style.color]="online.isOffline() ? 'var(--color-warning)' : 'var(--color-success)'"
               aria-hidden="true"
             />
             <span
-              [style.color]="
-                online.isOffline() ? 'var(--color-warning)' : 'var(--color-success)'
-              "
+              [style.color]="online.isOffline() ? 'var(--color-warning)' : 'var(--color-success)'"
             >
               {{ online.isOffline() ? 'Нет сети' : 'Онлайн' }}
             </span>
@@ -131,6 +127,12 @@
         >
           <span class="text-body text-[var(--color-text)]">Операций в очереди</span>
           <span class="text-small text-[var(--color-text-muted)]">{{ queueSize() }}</span>
+        </div>
+        <div
+          class="flex items-center justify-between border-t border-[var(--color-border)] px-inside-card py-3.5"
+        >
+          <span class="text-body text-[var(--color-text)]">Последняя синхронизация</span>
+          <span class="text-small text-[var(--color-text-muted)]">{{ lastSyncText() }}</span>
         </div>
         <button
           type="button"

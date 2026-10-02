@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import {
   IonButton,
   IonButtons,
@@ -14,11 +14,16 @@ import {
 import { Router, RouterLink } from '@angular/router';
 
 import { OnlineStatusService } from '../../../core/sync/online-status.service';
+import { SyncQueueService } from '../../../core/sync/sync-queue.service';
 import { DateRuPipe } from '../../../shared/pipes/date-ru.pipe';
 import { PluralPipe } from '../../../shared/pipes/plural.pipe';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { FabComponent } from '../../../shared/ui/fab/fab.component';
 import { OfflineBannerComponent } from '../../../shared/ui/offline-banner/offline-banner.component';
+import {
+  SyncIndicatorComponent,
+  type SyncIndicatorState,
+} from '../../../shared/ui/sync-indicator/sync-indicator.component';
 import { categoryLabel } from '../../../domain/templates/system-templates';
 import { JournalsStore } from '../../../stores/journals.store';
 
@@ -45,6 +50,7 @@ import { JournalsStore } from '../../../stores/journals.store';
     EmptyStateComponent,
     FabComponent,
     OfflineBannerComponent,
+    SyncIndicatorComponent,
   ],
   templateUrl: './journals-list.page.html',
 })
@@ -53,7 +59,16 @@ export class JournalsListPage {
   protected readonly store = inject(JournalsStore);
   /** Состояние сети для баннера (ТЗ 9.2). */
   protected readonly online = inject(OnlineStatusService);
+  private readonly queue = inject(SyncQueueService);
   private readonly router = inject(Router);
+
+  /** Статус синхронизации для иконки в шапке (ТЗ 8.2). */
+  protected readonly syncState = computed<SyncIndicatorState>(() => {
+    if (this.online.isOffline()) {
+      return 'offline';
+    }
+    return this.queue.size() > 0 ? 'pending' : 'synced';
+  });
 
   /** Иконки и подписи. */
   protected readonly settingsIcon = 'settings-outline';

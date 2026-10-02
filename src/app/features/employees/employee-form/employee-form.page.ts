@@ -10,7 +10,7 @@ import {
   IonHeader,
   IonInput,
   IonTitle,
-  IonToolbar
+  IonToolbar,
 } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 

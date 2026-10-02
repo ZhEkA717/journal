@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import {
   IonButton,
   IonButtons,
@@ -90,9 +97,9 @@ export class EmployeesListPage {
       return;
     }
 
-    host.getInputElement().then(value => {
-      value.focus()
-    })
+    host.getInputElement().then((value) => {
+      value.focus();
+    });
   }
 
   protected get searchButtonLabel(): string {

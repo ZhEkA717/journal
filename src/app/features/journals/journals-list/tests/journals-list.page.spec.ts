@@ -105,6 +105,15 @@ describe('JournalsListPage', () => {
     expect(empty.fixture.nativeElement.querySelector('app-fab')).not.toBeNull();
   });
 
+  it('показывает индикатор синхронизации в шапке', () => {
+    const { fixture } = setup([summary()]);
+
+    const label = fixture.nativeElement
+      .querySelector('app-sync-indicator [aria-label]')
+      ?.getAttribute('aria-label');
+    expect(label).toBeTruthy();
+  });
+
   it('перезагружает журналы по pull-to-refresh', async () => {
     const { fixture, store } = setup([summary()]);
 

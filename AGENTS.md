@@ -11,8 +11,8 @@ Angular 22 + Ionic 9 + Tailwind CSS 4 приложение для ведения
 Планируется разбить работу на задачи T1–T12 (каркас → данные → shared → экраны →
 Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит критериев готовности).
 Текущее состояние: **T1 (каркас), T2 (слой данных), T3 (shared), T4 (stores и
-экраны ТЗ 8.1–8.7) и T5 (Supabase/Auth) завершены**. Следующая — T6 (Sync).
-PDF в детальном виде журнала и реальная синхронизация пока заглушки (Т7 и T6).
+экраны ТЗ 8.1–8.7), T5 (Supabase/Auth) и T6 (Sync) завершены**. Следующая —
+T7 (PDF). PDF в детальном виде журнала пока заглушка (Т7).
 
 Что уже есть в слое данных:
 
@@ -53,9 +53,29 @@ PDF в детальном виде журнала и реальная синхр
   запуск
 - `docs/supabase-schema.sql` — таблицы, индексы и RLS-политики (ТЗ 11.1–11.2),
   выполняется вручную в SQL Editor проекта Supabase
-- **Отложено, рассмотрим позже (к T6):** «Выйти и удалить данные» в настройках
-  стирает только локальную БД. Решить при синхронизации, нужно ли при выходе
-  завершать сессию Supabase, иначе pull воскресит удалённые данные из облака
+
+Что уже есть в Sync (ТЗ 9.2, 11.3):
+
+- `core/sync/sync.service.ts` — `SyncService`: API по ТЗ (`enqueue`, `flush`,
+  `pullChanges`, `resolveConflict`) плюс `syncAll()` — полный цикл, возвращает
+  `{pushed, pulled}`. Водяной знак pull — localStorage
+  `journal:sync:lastSyncAt:<uid>` (`SYNC_WATERMARK_PREFIX`). Автозапуск — два
+  `effect()` (старт/сеть/вход и рост очереди); сервис обязан существовать с
+  старта приложения — его создаёт `provideAppInitializer` в `app.config.ts`,
+  не убирай. Повторы 1s→16s, после `SYNC_MAX_RETRIES` (5) неудач операция уходит
+  в `conflict`. Без клиента/сессии/сети `syncAll` бросает понятные ошибки
+  (пустой Supabase — не ошибка, офлайн-работа обязательна, ТЗ 12.5)
+- `core/sync/remote-mappers.ts` — маппинг локальных сущностей ↔ строки Supabase
+  (camelCase → snake_case, `user_id`, отсутствующие поля → `null`)
+- `core/sync/sync-conflict.service.ts` — `pickWinner`: Last-Write-Wins по
+  `updatedAt`, при равенстве — локальная версия
+- Настройки (ТЗ 8.7): кнопка «Синхронизировать» вызывает `syncAll()` с тостами,
+  строка «Последняя синхронизация»; в шапке списка журналов (ТЗ 8.2) —
+  `<app-sync-indicator>` по сети и размеру очереди
+- `LocalDataService.wipe()` дополнительно стирает водяные знаки из localStorage
+- **Отложено, рассмотрим позже:** «Выйти и удалить данные» стирает локальную БД
+  и водяные знаки, но не завершает сессию Supabase — без `signOut()` pull при
+  следующем старте воскресит данные из облака. Решение отложено пользователем.
 
 Что уже есть в stores и экранах (ТЗ 3, 8.1–8.7):
 
@@ -67,7 +87,8 @@ PDF в детальном виде журнала и реальная синхр
 - `stores/employees.store.ts` — сотрудники, поиск, счётчики инструктажей, `fire`/`restore`
 - `features/onboarding/`, `features/journals/{journals-list,journal-create,journal-detail,entry-form}/`,
   `features/employees/{employees-list,employee-form}/`, `features/settings/`
-- `core/storage/local-data.service.ts` — полная очистка локальной БД для действия «Выйти»
+- `core/storage/local-data.service.ts` — полная очистка локальной БД и водяных
+  знаков синхронизации для действия «Выйти»
 - Оболочка `app.component.ts` строит навигацию вручную (`IonRouterOutlet` + `ion-tab-bar`),
   потому что `ion-tabs` не работает с плоскими маршрутами вкладок (см. комментарий в файле)
 
@@ -88,7 +109,8 @@ PDF в детальном виде журнала и реальная синхр
 
 - `src/main.ts` — entrypoint, вызывает `bootstrapApplication(AppComponent, appConfig)`
 - `src/app/app.component.ts` — оболочка: `IonApp` + `IonRouterOutlet` + ручной `ion-tab-bar`
-- `src/app/app.config.ts` — провайдеры: zoneless, роутер, `provideIonicAngular`, HTTP
+- `src/app/app.config.ts` — провайдеры: zoneless, роутер, `provideIonicAngular`, HTTP,
+  `SupabaseClient`, инициализация `SyncService`
 - `src/app/app.routes.ts` — маршруты и константа вкладок `APP_TABS`
 - `src/app/core/` — синглтоны и инфраструктура: `db`, `sync`, `supabase`, `pdf`, `auth`, `date`, `storage`
 - `src/app/domain/` — модели, репозитории, доменные сервисы

@@ -61,9 +61,7 @@
     </app-form-field>
 
     @if (isEditing() && employee()?.firedAt) {
-      <ion-button expand="block" color="medium" (click)="rehire()"
-        >Вернуть на работу</ion-button
-      >
+      <ion-button expand="block" color="medium" (click)="rehire()">Вернуть на работу</ion-button>
     }
 
     <ion-button

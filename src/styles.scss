@@ -94,27 +94,27 @@ ion-button {
   letter-spacing: normal;
 }
 
-ion-button[fill="solid"],
+ion-button[fill='solid'],
 ion-button:not([fill]) {
   color: var(--ion-color-primary-contrast);
 }
 
-ion-button[fill="outline"] {
+ion-button[fill='outline'] {
   color: var(--ion-color-primary);
 }
 
-ion-button[fill="clear"] {
+ion-button[fill='clear'] {
   color: var(--ion-color-primary);
 }
 
-ion-button[color="medium"] {
+ion-button[color='medium'] {
   color: var(--ion-color-medium);
 }
 
-ion-button[color="danger"] {
+ion-button[color='danger'] {
   color: var(--ion-color-danger);
 }
 
-ion-button[color="secondary"] {
+ion-button[color='secondary'] {
   color: var(--ion-color-secondary);
 }

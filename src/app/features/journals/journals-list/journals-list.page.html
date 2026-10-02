@@ -2,6 +2,7 @@
   <ion-toolbar>
     <ion-title>Мои журналы</ion-title>
     <ion-buttons slot="end">
+      <app-sync-indicator [state]="syncState()" />
       <ion-button
         fill="clear"
         routerLink="/settings"
@@ -72,9 +73,7 @@
                     {{ item.entryCount }}
                     {{ item.entryCount | plural: 'запись' : 'записи' : 'записей' }} ·
                     {{ item.employeeCount }}
-                    {{
-                      item.employeeCount | plural: 'сотрудник' : 'сотрудника' : 'сотрудников'
-                    }}
+                    {{ item.employeeCount | plural: 'сотрудник' : 'сотрудника' : 'сотрудников' }}
                   </p>
                   <p class="text-small text-[var(--color-text-muted)]">
                     @if (item.journal.closedAt) {

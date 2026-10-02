@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 
 import { AppDatabase } from '../db/app-db';
+import { SYNC_WATERMARK_PREFIX } from '../sync/sync.service';
 
 /**
  * Полная очистка локальных данных. Нужна для действия «Выйти» в настройках
@@ -33,5 +34,23 @@ export class LocalDataService {
         ]);
       },
     );
+    this.clearWatermarks();
+  }
+
+  /** Стирает водяные знаки синхронизации из localStorage. */
+  private clearWatermarks(): void {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
+    try {
+      for (let index = localStorage.length - 1; index >= 0; index -= 1) {
+        const key = localStorage.key(index);
+        if (key?.startsWith(SYNC_WATERMARK_PREFIX) === true) {
+          localStorage.removeItem(key);
+        }
+      }
+    } catch {
+      // Хранилище недоступно — очистка БД уже выполнена.
+    }
   }
 }
