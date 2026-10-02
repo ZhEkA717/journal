@@ -17,7 +17,7 @@ import { IonButton, ModalController } from '@ionic/angular';
         <p class="mt-2 text-body text-[var(--color-text-muted)]">{{ message }}</p>
       </div>
       <div class="mt-auto flex gap-3">
-        <ion-button expand="block" fill="clear" color="medium" class="flex-1" (click)="cancel()">
+        <ion-button expand="block" fill="outline" color="medium" class="flex-1" (click)="cancel()">
           {{ cancelText }}
         </ion-button>
         <ion-button

@@ -98,7 +98,7 @@ const APP_VERSION = '0.0.0';
                 />
               </app-form-field>
               <div class="flex gap-between-cards">
-                <ion-button expand="block" fill="clear" color="medium" (click)="cancelEdit()">
+                <ion-button expand="block" fill="outline" color="medium" (click)="cancelEdit()">
                   Отмена
                 </ion-button>
                 <ion-button expand="block" color="primary" [disabled]="saving()" (click)="save()">
