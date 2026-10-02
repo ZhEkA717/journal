@@ -64,7 +64,7 @@ ion-router-outlet {
     --placeholder-color: var(--color-text-muted);
     --border-color: var(--color-border);
     --highlight-color-focused: var(--ion-color-primary);
-    --border-radius: 10px;
+    --border-radius: 10px !important;
     --padding-start: 12px !important;
     --padding-end: 12px;
     font-size: 16px;

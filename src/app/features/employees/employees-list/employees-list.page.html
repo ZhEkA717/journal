@@ -1,0 +1,102 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Сотрудники</ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        fill="clear"
+        (click)="toggleSearch()"
+        [attr.aria-label]="searchButtonLabel"
+        class="text-[var(--color-text-muted)]"
+      >
+        <ion-icon slot="icon-only" [name]="searchIcon" aria-hidden="true" />
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  @if (searchVisible()) {
+    <ion-searchbar
+
+      show-clear-button="focus"
+      #searchbar
+      placeholder="Поиск по имени..."
+      [value]="store.query()"
+      (ionInput)="onSearch($event)"
+    />
+  }
+
+  <app-offline-banner [visible]="online.isOffline()" />
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content />
+  </ion-refresher>
+  <div class="p-screen-x pt-between-sections pb-[calc(var(--tab-bar-safe-height)+96px)]">
+    @if (store.loading()) {
+      <div class="flex justify-center py-12">
+        <ion-spinner name="crescent" />
+      </div>
+    } @else if (!store.hasEmployees()) {
+      <app-empty-state
+        icon="people-outline"
+        title="Пока нет сотрудников"
+        description="Нажмите + чтобы добавить"
+      />
+    } @else if (store.filtered().length === 0) {
+      <app-empty-state
+        icon="search-outline"
+        title="Никого не найдено"
+        description="Измените поисковый запрос"
+        actionLabel="Сбросить поиск"
+        (action)="resetSearch()"
+      />
+    } @else {
+      <div class="flex flex-col gap-between-cards">
+        @for (employee of store.filtered(); track employee.id) {
+          <a
+            class="card-surface block p-inside-card"
+            [class.opacity-60]="employee.firedAt"
+            [routerLink]="['/employees', employee.id, 'edit']"
+          >
+            <div class="flex items-start gap-between-cards">
+              <span
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-bg)] text-small font-semibold text-[var(--ion-color-primary)]"
+                aria-hidden="true"
+              >
+                {{ initialsOf(employee.fullName) }}
+              </span>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <h2 class="min-w-0 flex-1 truncate text-h3 text-[var(--color-text)]">
+                    {{ employee.fullName }}
+                  </h2>
+                  @if (employee.firedAt) {
+                    <span
+                      class="shrink-0 rounded-full bg-[var(--color-bg)] px-2 py-0.5 text-tiny text-[var(--color-text-muted)]"
+                    >
+                      Уволен
+                    </span>
+                  }
+                </div>
+                <p class="text-small text-[var(--color-text-muted)]">{{ employee.position }}</p>
+                <div class="mt-2 border-t border-[var(--color-border)] pt-2">
+                  <p class="text-small text-[var(--color-text-muted)]">
+                    В компании с {{ employee.hiredAt | dateRu }}
+                  </p>
+                  <p class="text-small text-[var(--color-text-muted)]">
+                    {{ store.instructionsOf()(employee.id) }}
+                    {{
+                      store.instructionsOf()(employee.id)
+                        | plural: 'инструктаж' : 'инструктажа' : 'инструктажей'
+                    }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</ion-content>
+
+<app-fab link="/employees/new" ariaLabel="Добавить сотрудника" />

@@ -18,15 +18,7 @@ import { IonIcon } from '@ionic/angular';
     // задаётся из оболочки: `--tab-bar-height` живёт там же, где сама панель.
     style: 'bottom: calc(var(--tab-bar-safe-height, 0px) + var(--fab-offset, 16px));',
   },
-  template: `
-    <a
-      class="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-accent)] text-white shadow-lg"
-      [routerLink]="link()"
-      [attr.aria-label]="ariaLabel()"
-    >
-      <ion-icon [name]="icon()" class="text-3xl" aria-hidden="true" />
-    </a>
-  `,
+  templateUrl: './fab.component.html',
 })
 export class FabComponent {
   /** Адрес маршрута, куда ведёт кнопка. */

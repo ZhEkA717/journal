@@ -25,22 +25,7 @@ const STATE_COLOR: Readonly<Record<SyncIndicatorState, string>> = {
   selector: 'app-sync-indicator',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonIcon],
-  template: `
-    <span
-      class="inline-flex items-center gap-1 text-tiny text-[var(--color-text-muted)]"
-      [attr.aria-label]="label()"
-    >
-      <ion-icon
-        [name]="icon()"
-        [style.color]="color()"
-        [class.animate-spin]="state() === 'pending'"
-        aria-hidden="true"
-      />
-      @if (showLabel()) {
-        <span>{{ label() }}</span>
-      }
-    </span>
-  `,
+  templateUrl: './sync-indicator.component.html',
 })
 export class SyncIndicatorComponent {
   /** Состояние синхронизации. */

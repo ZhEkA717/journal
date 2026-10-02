@@ -1,0 +1,74 @@
+<ion-content [fullscreen]="true" class="bg-[var(--color-bg)]">
+  <div class="flex min-h-full flex-col justify-between">
+    <div class="flex flex-1 flex-col items-center justify-center gap-between-cards">
+      <div
+        class="flex h-24 w-24 items-center justify-center rounded-modal bg-[var(--ion-color-primary)]"
+      >
+        <ion-icon [name]="bookIcon" class="text-6xl text-white" aria-hidden="true" />
+      </div>
+      <div class="px-screen-x text-center">
+        <h1 class="text-h1 text-[var(--color-text)]">Журналы</h1>
+        <p class="mt-2 text-body text-[var(--color-text-muted)]">
+          Все журналы учёта в одном месте. Работает без интернета.
+        </p>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-between-cards px-screen-x pb-between-sections">
+      <app-form-field
+        label="Название организации"
+        [required]="true"
+        [error]="errors()['name']"
+        [hint]="'Например, ООО «Ромашка»'"
+      >
+        <ion-input
+          class="field-control"
+          [class.field-control-invalid]="errors()['name']"
+          fill="outline"
+          [clearInput]="true"
+          labelPlacement="stacked"
+          placeholder="ООО «Ромашка»"
+          [value]="name()"
+          (ionInput)="onName($event)"
+          (ionBlur)="submitIfValid()"
+        />
+      </app-form-field>
+
+      <app-form-field
+        label="Ответственный за ведение"
+        [required]="true"
+        [error]="errors()['responsiblePerson']"
+        hint="Иванов И.И."
+      >
+        <ion-input
+          class="field-control"
+          [class.field-control-invalid]="errors()['responsiblePerson']"
+          fill="outline"
+          [clearInput]="true"
+          labelPlacement="stacked"
+          placeholder="Иванов И.И."
+          [value]="responsiblePerson()"
+          (ionInput)="onResponsible($event)"
+          (ionBlur)="submitIfValid()"
+        />
+      </app-form-field>
+
+      <ion-button
+        expand="block"
+        color="secondary"
+        class="h-13 text-body font-semibold"
+        [disabled]="saving()"
+        (click)="start()"
+      >
+        {{ saving() ? 'Сохраняем…' : 'Начать работу' }}
+      </ion-button>
+
+      <p
+        class="flex items-center justify-center gap-1.5 text-tiny text-[var(--color-text-muted)]"
+      >
+        <ion-icon [name]="lockIcon" class="text-sm" aria-hidden="true" />
+        Данные хранятся только на вашем устройстве
+      </p>
+    </div>
+  </div>
+</ion-content>

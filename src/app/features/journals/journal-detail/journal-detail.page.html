@@ -1,0 +1,174 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/journals" text="" />
+    </ion-buttons>
+    <ion-title class="text-h3">{{ store.journal()?.title ?? 'Журнал' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button id="journal-menu-button" aria-label="Меню журнала" fill="clear">
+        <ion-icon slot="icon-only" [name]="menuIcon" />
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <app-offline-banner [visible]="online.isOffline()" />
+</ion-header>
+
+<ion-popover
+  [dismissOnSelect]="true"
+  class="journal-menu"
+  trigger="journal-menu-button"
+  triggerAction="click"
+>
+  <ng-template>
+    <div class="flex w-full flex-col py-1">
+      <button
+        type="button"
+        class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-text)]"
+        [disabled]="store.isClosed()"
+        (click)="close()"
+      >
+        <ion-icon [name]="closeIcon" class="text-lg" aria-hidden="true" />
+        Закрыть журнал
+      </button>
+      <button
+        type="button"
+        class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-danger)]"
+        (click)="remove()"
+      >
+        <ion-icon [name]="trashIcon" class="text-lg" aria-hidden="true" />
+        Удалить журнал
+      </button>
+    </div>
+  </ng-template>
+</ion-popover>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content />
+  </ion-refresher>
+
+  @if (store.loading()) {
+    <div class="flex justify-center py-12">
+      <ion-spinner name="crescent" />
+    </div>
+  } @else if (!store.journal()) {
+    <app-empty-state
+      icon="alert-circle-outline"
+      title="Журнал не найден"
+      description="Возможно, он был удалён"
+      actionLabel="К списку журналов"
+      (action)="backToList()"
+    />
+  } @else {
+    <div
+      class="border-b border-[var(--color-border)] bg-[var(--color-surface)] px-screen-x py-3"
+    >
+      <p class="text-small text-[var(--color-text-muted)]">
+        @if (store.isClosed()) {
+          Закрыт {{ store.journal()?.closedAt | dateRu }} · Ответственный:
+          {{ store.journal()?.responsiblePerson }}
+        } @else {
+          Открыт с {{ store.journal()?.startedAt | dateRu }} · Ответственный:
+          {{ store.journal()?.responsiblePerson }}
+        }
+      </p>
+      <div class="mt-1 flex items-center justify-between">
+        <span class="text-body font-medium text-[var(--color-text)]">
+          {{ store.entryCount() }}
+          {{ store.entryCount() | plural: 'запись' : 'записи' : 'записей' }}
+        </span>
+        @if (store.isClosed()) {
+          <span
+            class="rounded-full bg-[var(--color-bg)] px-2 py-0.5 text-tiny text-[var(--color-text-muted)]"
+          >
+            Журнал закрыт
+          </span>
+        }
+      </div>
+    </div>
+
+    @if (!store.hasEntries()) {
+      <app-empty-state
+        icon="create-outline"
+        title="Нет записей"
+        description="Нажмите + чтобы добавить"
+      />
+    } @else {
+      <div
+        class="sticky top-0 z-10 grid grid-cols-[72px_1fr_96px_32px] gap-2 border-b border-[var(--color-border)] bg-[var(--color-bg)] px-screen-x py-2"
+      >
+        <span
+          class="text-tiny font-semibold tracking-wide text-[var(--color-text-muted)] uppercase"
+        >
+          Дата
+        </span>
+        <span
+          class="text-tiny font-semibold tracking-wide text-[var(--color-text-muted)] uppercase"
+        >
+          ФИО
+        </span>
+        <span
+          class="text-tiny font-semibold tracking-wide text-[var(--color-text-muted)] uppercase"
+        >
+          Вид
+        </span>
+        <span class="sr-only">Подпись</span>
+      </div>
+
+      <ion-list lines="none">
+        @for (row of store.rows(); track row.id) {
+          <ion-item-sliding>
+            <ion-item type="button" [routerLink]="entryLink(row.id)" [detail]="false">
+              <div
+                class="grid w-full grid-cols-[72px_1fr_96px_32px] gap-2 py-2 text-small text-[var(--color-text)]"
+              >
+                <span class="truncate">{{ row.date | dateRu }}</span>
+                <span class="truncate">{{ shortName(row.employeeName) }}</span>
+                <span class="truncate text-[var(--color-text-muted)]">{{ row.kind }}</span>
+                <span class="flex justify-center">
+                  @if (row.signed) {
+                    <ion-icon
+                      [name]="signedIcon"
+                      class="text-lg text-[var(--color-success)]"
+                      aria-label="Подпись есть"
+                    />
+                  } @else {
+                    <ion-icon
+                      [name]="unsignedIcon"
+                      class="text-lg text-[var(--color-warning)]"
+                      aria-label="Без подписи"
+                    />
+                  }
+                </span>
+              </div>
+            </ion-item>
+            <ion-item-options side="end">
+              <ion-item-option color="primary" (click)="editEntry(row.id)"
+                >Изменить</ion-item-option
+              >
+              <ion-item-option color="danger" (click)="removeEntry(row.id)"
+                >Удалить</ion-item-option
+              >
+            </ion-item-options>
+          </ion-item-sliding>
+        }
+      </ion-list>
+    }
+  }
+</ion-content>
+
+@if (store.journal() && !store.isClosed()) {
+  <ion-footer class="export-footer">
+    <ion-button
+      expand="block"
+      fill="outline"
+      color="primary"
+      class="export-button h-11 font-semibold"
+      (click)="exportPdf()"
+    >
+      <ion-icon slot="start" [name]="downloadIcon" aria-hidden="true" />
+      Экспорт в PDF
+    </ion-button>
+  </ion-footer>
+  <app-fab ariaLabel="Добавить запись" (click)="addEntry()"></app-fab>
+}

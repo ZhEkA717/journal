@@ -1,0 +1,20 @@
+<ion-app>
+  @if (session.isReady()) {
+    <ion-tabs>
+      @if (activeTab(); as tab) {
+        <ion-tab-bar
+          slot="bottom"
+          [selectedTab]="tab.id"
+          (click)="onTabClick($event)"
+        >
+          @for (item of tabs; track item.id) {
+            <ion-tab-button [tab]="item.id" [href]="item.href">
+              <ion-icon [name]="item.icon" aria-hidden="true" />
+              <ion-label>{{ item.label }}</ion-label>
+            </ion-tab-button>
+          }
+        </ion-tab-bar>
+      }
+    </ion-tabs>
+  }
+</ion-app>

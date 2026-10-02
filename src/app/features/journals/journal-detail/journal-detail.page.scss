@@ -1,0 +1,13 @@
+ion-footer.export-footer {
+  background: var(--color-bg);
+  height: var(--tab-bar-safe-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+}
+
+ion-footer.export-footer .export-button {
+  margin: 0;
+  width: 100%;
+}

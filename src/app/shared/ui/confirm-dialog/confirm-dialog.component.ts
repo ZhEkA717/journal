@@ -10,27 +10,7 @@ import { IonButton, ModalController } from '@ionic/angular';
   selector: 'app-confirm-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonButton],
-  template: `
-    <div class="flex h-full w-full flex-col gap-6 bg-[var(--color-surface)] p-6">
-      <div>
-        <h2 class="text-h3 text-[var(--color-text)]">{{ title }}</h2>
-        <p class="mt-2 text-body text-[var(--color-text-muted)]">{{ message }}</p>
-      </div>
-      <div class="mt-auto flex gap-3">
-        <ion-button expand="block" fill="outline" color="medium" class="flex-1" (click)="cancel()">
-          {{ cancelText }}
-        </ion-button>
-        <ion-button
-          expand="block"
-          class="flex-1"
-          [color]="danger ? 'danger' : 'primary'"
-          (click)="confirm()"
-        >
-          {{ confirmText }}
-        </ion-button>
-      </div>
-    </div>
-  `,
+  templateUrl: './confirm-dialog.component.html',
 })
 export class ConfirmDialogComponent {
   /** Заголовок окна. */

@@ -40,36 +40,8 @@ interface TabButtonElement extends HTMLElement {
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonApp, IonTabs, IonTabBar, IonTabButton, IonLabel, IonIcon],
-  template: `
-    <ion-app>
-      @if (session.isReady()) {
-        <ion-tabs>
-          @if (activeTab(); as tab) {
-            <ion-tab-bar
-              slot="bottom"
-              [selectedTab]="tab.id"
-              (click)="onTabClick($event)"
-            >
-              @for (item of tabs; track item.id) {
-                <ion-tab-button [tab]="item.id" [href]="item.href">
-                  <ion-icon [name]="item.icon" aria-hidden="true" />
-                  <ion-label>{{ item.label }}</ion-label>
-                </ion-tab-button>
-              }
-            </ion-tab-bar>
-          }
-        </ion-tabs>
-      }
-    </ion-app>
-  `,
-  styles: `
-    ion-tab-bar {
-      --border: none;
-      /* Высота панели вкладок задаётся токеном: на неё опирается app-fab. */
-      height: var(--tab-bar-safe-height);
-      box-shadow: 0 -1px 3px rgb(15 23 42 / 8%);
-    }
-  `,
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   protected readonly tabs = APP_TABS;

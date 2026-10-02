@@ -22,39 +22,7 @@ import SignaturePadLib from 'signature_pad';
   selector: 'app-signature-pad',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonButton, IonIcon],
-  template: `
-    <div class="flex flex-col gap-2">
-      <div
-        class="relative overflow-hidden rounded-input border border-[var(--color-border)] bg-[var(--color-surface)]"
-      >
-        <canvas
-          #canvas
-          class="block h-40 w-full touch-none"
-          [class.opacity-50]="disabled()"
-          [attr.aria-label]="ariaLabel()"
-        ></canvas>
-        @if (isEmpty()) {
-          <p
-            class="pointer-events-none absolute inset-0 flex items-center justify-center text-small text-[var(--color-text-muted)]"
-          >
-            Подпишите здесь
-          </p>
-        }
-      </div>
-      <div class="flex justify-end">
-        <ion-button
-          size="small"
-          fill="clear"
-          color="medium"
-          [disabled]="disabled() || isEmpty()"
-          (click)="clear()"
-        >
-          <ion-icon slot="start" [name]="clearIcon" aria-hidden="true" />
-          Очистить
-        </ion-button>
-      </div>
-    </div>
-  `,
+  templateUrl: './signature-pad.component.html',
 })
 export class SignaturePadComponent {
   /** Готовая подпись в base64 PNG: подставляется при редактировании записи. */

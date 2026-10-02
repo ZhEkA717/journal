@@ -1,0 +1,113 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/journals" text="" />
+    </ion-buttons>
+    <ion-title class="text-h2">Новый журнал</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="flex flex-col gap-between-sections p-screen-x py-between-sections">
+    <section>
+      <h2
+        class="mb-between-cards text-tiny font-semibold tracking-wide text-[var(--color-text-muted)] uppercase"
+      >
+        Тип журнала
+      </h2>
+      <div class="grid grid-cols-2 gap-between-cards">
+        @for (template of store.templates(); track template.id) {
+          <button
+            type="button"
+            class="relative flex h-25 flex-col items-center justify-center gap-2 rounded-card border-2 p-4"
+            [style.background]="
+              template.id === selectedTemplateId()
+                ? softBackground(template.color)
+                : 'var(--color-surface)'
+            "
+            [style.border-color]="
+              template.id === selectedTemplateId() ? template.color : 'var(--color-border)'
+            "
+            [attr.aria-pressed]="template.id === selectedTemplateId()"
+            (click)="selectTemplate(template)"
+          >
+            @if (template.id === selectedTemplateId()) {
+              <span
+                class="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full"
+                [style.background]="template.color"
+              >
+                <ion-icon [name]="checkIcon" class="text-xs text-white" aria-hidden="true" />
+              </span>
+            }
+            <ion-icon
+              [name]="template.iconName"
+              class="text-2xl"
+              [style.color]="
+                template.id === selectedTemplateId()
+                  ? template.color
+                  : 'var(--color-text-muted)'
+              "
+              aria-hidden="true"
+            />
+            <span
+              class="text-small text-center leading-snug font-medium text-[var(--color-text)]"
+            >
+              {{ template.name }}
+            </span>
+          </button>
+        }
+      </div>
+      @if (errors()['templateId']; as message) {
+        <p class="mt-2 text-tiny text-[var(--color-danger)]" role="alert">{{ message }}</p>
+      }
+    </section>
+
+    <app-form-field label="Название журнала" [required]="true" [error]="errors()['title']">
+      <ion-input
+        class="field-control"
+        [class.field-control-invalid]="errors()['title']"
+        fill="outline"
+        [clearInput]="true"
+        placeholder="Введите название"
+        [value]="title()"
+        (ionInput)="onTitle($event)"
+      />
+    </app-form-field>
+
+    <app-form-field
+      label="Ответственный"
+      [required]="true"
+      [error]="errors()['responsiblePerson']"
+    >
+      <ion-input
+        class="field-control"
+        [class.field-control-invalid]="errors()['responsiblePerson']"
+        fill="outline"
+        [clearInput]="true"
+        placeholder="Иванов И.И."
+        [value]="responsiblePerson()"
+        (ionInput)="onResponsible($event)"
+      />
+    </app-form-field>
+
+    <app-form-field label="Дата начала" [required]="true" [error]="errors()['startedAt']">
+      <ion-datetime
+        class="field-control"
+        presentation="date"
+        locale="ru"
+        [value]="startedAt() || null"
+        (ionChange)="onStartedAt($event)"
+      />
+    </app-form-field>
+
+    <ion-button
+      expand="block"
+      color="primary"
+      class="h-13 text-body font-semibold"
+      [disabled]="saving()"
+      (click)="create()"
+    >
+      {{ saving() ? 'Создаём…' : 'Создать журнал' }}
+    </ion-button>
+  </div>
+</ion-content>

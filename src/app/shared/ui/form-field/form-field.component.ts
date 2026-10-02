@@ -9,24 +9,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   selector: 'app-form-field',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block' },
-  template: `
-    <div class="flex flex-col gap-1.5">
-      <!-- Поле приходит через проекцию содержимого, поэтому правило не видит связи. -->
-      <!-- eslint-disable-next-line @angular-eslint/template/label-has-associated-control -->
-      <label class="text-small font-medium text-[var(--color-text-muted)]">
-        {{ label() }}
-        @if (required()) {
-          <span class="text-[var(--color-accent)]" aria-hidden="true">*</span>
-        }
-      </label>
-      <ng-content />
-      @if (error(); as message) {
-        <p class="text-tiny text-[var(--color-danger)]" role="alert">{{ message }}</p>
-      } @else if (hint(); as text) {
-        <p class="text-tiny text-[var(--color-text-muted)]">{{ text }}</p>
-      }
-    </div>
-  `,
+  templateUrl: './form-field.component.html',
 })
 export class FormFieldComponent {
   /** Подпись поля. */
