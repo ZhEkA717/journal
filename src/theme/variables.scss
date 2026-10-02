@@ -24,6 +24,10 @@ body {
   --color-warning: #f59e0b;
   --color-accent: #ea580c;
 
+  // Цвет шапок экранов. Совпадает со статус-баром и splash, чтобы верхняя
+  // панель и заголовок сливались в одну полосу (ТЗ 13.1).
+  --color-header: #1e40af;
+
   --ion-color-secondary: #ea580c;
   --ion-color-secondary-rgb: 234, 88, 12;
   --ion-color-secondary-contrast: #ffffff;

@@ -118,3 +118,16 @@ ion-button[color='danger'] {
 ion-button[color='secondary'] {
   color: var(--ion-color-secondary);
 }
+
+// Шапки экранов — в цвет статус-бара (#1E40AF), чтобы верхняя панель сливалась
+// с заголовком (ТЗ 13.1). ion-toolbar читает --ion-toolbar-* с ion-header.
+ion-header {
+  --ion-toolbar-background: var(--color-header);
+  --ion-toolbar-color: var(--ion-color-primary-contrast);
+}
+
+// Кнопки-иконки (fill="clear") в шапке должны быть светлыми, иначе
+// глобальное правило ion-button[fill='clear'] делает их primary-синими.
+ion-header ion-button[fill='clear'] {
+  color: var(--ion-color-primary-contrast);
+}
