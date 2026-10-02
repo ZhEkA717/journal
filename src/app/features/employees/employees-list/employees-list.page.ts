@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal, viewChild } from '@angular/core';
 import {
   IonButton,
   IonButtons,
@@ -64,13 +64,17 @@ import { EmployeesStore } from '../../../stores/employees.store';
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
+
       @if (searchVisible()) {
         <ion-searchbar
+          show-clear-button="focus"
+          #searchbar
           placeholder="Поиск по имени..."
           [value]="store.query()"
           (ionInput)="onSearch($event)"
         />
       }
+
       <app-offline-banner [visible]="online.isOffline()" />
     </ion-header>
     <ion-content [fullscreen]="true">
@@ -156,6 +160,9 @@ export class EmployeesListPage {
   protected readonly online = inject(OnlineStatusService);
   private readonly router = inject(Router);
 
+  /** Ссылка на `<ion-searchbar>` через template ref: нужен и `setFocus()` (через
+   * прототип custom element), и доступ к `shadowRoot` для правки отступа. */
+  private readonly searchbarRef = viewChild<IonSearchbar>('searchbar');
   /** Показывать ли строку поиска. */
   protected readonly searchVisible = signal(false);
   /** Инициалы для аватара. */
@@ -165,6 +172,29 @@ export class EmployeesListPage {
 
   constructor() {
     void this.store.load();
+    // Когда панель поиска появляется — фокусируем внутренний `<input>` и
+    // увеличиваем отступ слева, чтобы между иконкой и текстом было больше
+    // воздуха (по умолчанию Ionic рисует 30px на iOS и 55px на MD, а на iOS
+    // зазор получается слишком тесным — около 3px).
+    effect(() => {
+      if (!this.searchVisible()) {
+        return;
+      }
+      this.focusAndSpaceSearch();
+    });
+  }
+
+  /** Ждём следующий кадр, чтобы Stencil успел завести shadow DOM,
+   * затем ставим фокус и расширяем отступ слева у внутреннего `<input>`. */
+  private focusAndSpaceSearch(): void {
+    const host = this.searchbarRef();
+    if (!host) {
+      return;
+    }
+
+    host.getInputElement().then(value => {
+      value.focus()
+    })
   }
 
   protected get searchButtonLabel(): string {

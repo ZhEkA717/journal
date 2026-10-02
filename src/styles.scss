@@ -59,13 +59,13 @@ ion-router-outlet {
 // через его собственные CSS-переменные (TZ 13.1, 4).
 @layer components {
   .field-control {
-    --background: var(--color-surface);
+    --background: var(--color-surface) !important;
     --color: var(--color-text);
     --placeholder-color: var(--color-text-muted);
     --border-color: var(--color-border);
     --highlight-color-focused: var(--ion-color-primary);
     --border-radius: 10px;
-    --padding-start: 12px;
+    --padding-start: 12px !important;
     --padding-end: 12px;
     font-size: 16px;
     border-radius: 10px;
@@ -113,7 +113,4 @@ ion-button[color="danger"] {
 
 ion-button[color="secondary"] {
   color: var(--ion-color-secondary);
-}
-ion-content {
-  height: calc(100% - 56px);
 }
