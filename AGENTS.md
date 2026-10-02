@@ -11,8 +11,8 @@ Angular 22 + Ionic 9 + Tailwind CSS 4 приложение для ведения
 Планируется разбить работу на задачи T1–T12 (каркас → данные → shared → экраны →
 Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит критериев готовности).
 Текущее состояние: **T1 (каркас), T2 (слой данных), T3 (shared), T4 (stores и
-экраны ТЗ 8.1–8.7), T5 (Supabase/Auth), T6 (Sync), T7 (PDF) и T8 (PWA/Capacitor)
-завершены**. Следующая — T9 (тесты).
+экраны ТЗ 8.1–8.7), T5 (Supabase/Auth), T6 (Sync), T7 (PDF), T8 (PWA/Capacitor)
+и T9 (тесты) завершены**. Следующая — аудит критериев готовности (ТЗ 14).
 
 Что уже есть в слое данных:
 
@@ -80,7 +80,7 @@ Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит �
 Что уже есть в PDF (ТЗ 9.3, 8.4):
 
 - `core/pdf/pdf-generator.service.ts` — `PdfGeneratorService`: `generateJournal(journalId)
-  → Uint8Array` (A4 595×842, шапка с организацией/ответственным/`legalRef`, таблица по
+→ Uint8Array` (A4 595×842, шапка с организацией/ответственным/`legalRef`, таблица по
   `template.columns`, повтор шапки таблицы на каждой странице, подписи встраиваются как
   PNG, место подписи ответственного и «Стр. X из Y» внизу) и `sharePdf(bytes, filename)`
   — Web Share API, иначе скачивание через ObjectURL (без `navigator.share` в jsdom
@@ -139,20 +139,59 @@ Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит �
 - Оболочка `app.component.ts` строит навигацию вручную (`IonRouterOutlet` + `ion-tab-bar`),
   потому что `ion-tabs` не работает с плоскими маршрутами вкладок (см. комментарий в файле)
 
+Что уже есть в тестах (ТЗ 12.4):
+
+- 42 файла / 284 юнит-теста (`npm test`): все сервисы, stores, репозитории и
+  smoke-спеки всех 9 страниц; `*.spec.ts` — только в папке `tests/` рядом с
+  тестируемым файлом
+- Покрытие сервисов 89.4% (минимум по сервисам 70%) — порог `coverageThresholds:
+{ statements: 70 }` в `angular.json` ловит регресс; точные цифры читать из
+  `coverage/journals/coverage-summary.json`; в консоль порог не выводится —
+  провал виден как ненулевой код выхода vitest
+- E2E (ТЗ 12.4): `npm run e2e` — Playwright, 3 критических сценария в
+  `e2e/critical.spec.ts` (создание журнала, запись с подписью, экспорт PDF),
+  помощники — `e2e/helpers.ts`, конфиг — `playwright.config.ts`
+- Грабли e2e вынесены в отдельный раздел **«Грабли»** ниже — посмотреть позже
+
 ## Команды
 
-| Задача       | Команда             |
-| ------------ | ------------------- |
-| Dev-сервер   | `npm start`         |
-| Сборка       | `npm run build`     |
-| Синк Capacitor | `npx cap sync`    |
-| Иконки PNG   | `npm run icons`     |
-| Тесты        | `npm test`          |
-| Линт         | `npm run lint`      |
-| Типы         | `npm run typecheck` |
-| Форматирование | `npm run format`  |
+| Задача         | Команда             |
+| -------------- | ------------------- |
+| Dev-сервер     | `npm start`         |
+| Сборка         | `npm run build`     |
+| Синк Capacitor | `npx cap sync`      |
+| Иконки PNG     | `npm run icons`     |
+| Тесты          | `npm test`          |
+| E2E-тесты      | `npm run e2e`       |
+| Линт           | `npm run lint`      |
+| Типы           | `npm run typecheck` |
+| Форматирование | `npm run format`    |
 
 Все команды перед коммитом должны проходить.
+
+## Грабли — TODO: посмотреть (T9, e2e)
+
+Нестандартные решения и подводные камни e2e/тестов T9, которые стоит осмотреть:
+
+1. **Chromium не скачивался.** `cdn.playwright.dev` из этой сети не отдаёт
+   файлы, поэтому в `playwright.config.ts` стоит `channel: 'chrome'` — системный
+   Chrome. Если сеть/браузер изменятся, можно вернуть локальный Chromium.
+2. **`navigator.share` в тесте отключён.** В headless Chrome API существует,
+   но всегда кидает `AbortError` (нет share sheet), из-за чего экспорт PDF
+   молча ничего не делал. В `e2e/critical.spec.ts` тест гасит `share`/`canShare`
+   через `page.addInitScript` и проверяет ветку скачивания. Поведение в реальном
+   браузере (настоящий share sheet) e2e не покрывает.
+3. **Селекторы через роли/текст, не атрибуты.** Ionic не отражает `@Prop()` в
+   HTML, поэтому ломались `ion-tab-button[tab=...]`, `getByLabel(...)`,
+   `ion-select[label=...]`; сейчас используется `getByRole('tab')`, `a[href=...]`,
+   `hasText`. Хрупко к изменению текстов («Журналы», «Вид инструктажа»…).
+4. **Coverage-порог не виден в консоли.** `coverageThresholds: 70` в
+   `angular.json` срабатывает только через vitest — при провале просто ненулевой
+   код выхода `npm test`, без понятного сообщения.
+5. **Скачивание браузера Playwright** при новом окружении: официальный
+   инсталлятор зависает; если понадобится — качать zip вручную с
+   `storage.googleapis.com/chrome-for-testing-public/...` (работает) или
+   использовать `channel: 'chrome'`/`msedge`.
 
 ## Структура
 

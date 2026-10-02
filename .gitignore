@@ -11,6 +11,11 @@ build/
 .cache/
 .vite/
 *.tsbuildinfo
+coverage/
+
+# Playwright
+test-results/
+playwright-report/
 
 # Env / secrets
 .env*

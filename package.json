@@ -12,7 +12,8 @@
     "format": "prettier --write \"src/**/*.{ts,html,scss,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss,json}\"",
     "icons": "node scripts/generate-icons.mjs",
-    "typecheck": "tsc -p tsconfig.app.json --noEmit"
+    "typecheck": "tsc -p tsconfig.app.json --noEmit",
+    "e2e": "playwright test"
   },
   "private": true,
   "packageManager": "npm@11.16.0",
@@ -52,8 +53,10 @@
     "@capacitor/cli": "^8.5.2",
     "@eslint/js": "^10.0.1",
     "@expo-google-fonts/roboto": "^0.4.3",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.6.4",
+    "@vitest/coverage-v8": "^5.0.3",
     "angular-eslint": "22.5.0",
     "eslint": "^10.9.1",
     "fake-indexeddb": "^6.2.5",
