@@ -13,8 +13,10 @@ import {
   withPreloading,
 } from '@angular/router';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 import { routes } from './app.routes';
+import { createSupabaseClient } from './core/supabase/supabase.client';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,6 +30,8 @@ export const appConfig: ApplicationConfig = {
     ),
     // Required for the Angular router to drive Ionic transitions (TZ 4, 12.2).
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    // Клиент Supabase (ТЗ 11): `null`, пока в environment не заполнены ключи.
+    { provide: SupabaseClient, useFactory: createSupabaseClient },
     // `swipeBackEnabled` в `mode: 'md'` выключен по умолчанию — включаем явно.
     // При свайпе жест водит штатную транзицию сам, а после pop() Ionic играл её же
     // повторно (вниз + fade) — двойная анимация; `navAnimation` гасит только повтор.

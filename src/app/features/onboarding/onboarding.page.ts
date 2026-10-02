@@ -3,6 +3,7 @@ import { IonButton, IonContent, IonIcon, IonInput } from '@ionic/angular';
 import { Router } from '@angular/router';
 import type { InputCustomEvent } from '@ionic/angular';
 
+import { AuthService } from '../../core/auth/auth.service';
 import { FormFieldComponent } from '../../shared/ui/form-field/form-field.component';
 import { errorMessage } from '../../shared/utils/error.utils';
 import { ToastService } from '../../shared/ui/toast/toast.service';
@@ -20,6 +21,7 @@ import { SessionStore } from '../../stores/session.store';
 })
 export class OnboardingPage {
   private readonly session = inject(SessionStore);
+  private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
 
@@ -67,6 +69,13 @@ export class OnboardingPage {
     this.saving.set(true);
     try {
       await this.session.setup(draft);
+      // ТЗ 8.1, шаг 3: анонимная сессия Supabase. Ошибка (офлайн или ключи не
+      // заполнены) не блокирует онбординг — приложение работает локально.
+      try {
+        await this.auth.signInAnonymously();
+      } catch (error) {
+        console.warn('Анонимная сессия Supabase не создана', error);
+      }
       await this.router.navigateByUrl('/journals', { replaceUrl: true });
     } catch (error) {
       await this.toast.error(errorMessage(error, 'Не удалось сохранить организацию'));

@@ -10,9 +10,9 @@ Angular 22 + Ionic 9 + Tailwind CSS 4 приложение для ведения
 
 Планируется разбить работу на задачи T1–T12 (каркас → данные → shared → экраны →
 Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит критериев готовности).
-Текущее состояние: **T1 (каркас), T2 (слой данных), T3 (shared) и T4 (stores и
-экраны ТЗ 8.1–8.7) завершены**. Следующая — T5 (Supabase/Auth). PDF в детальном
-виде журнала и реальная синхронизация пока заглушки (Т7 и T5/T6).
+Текущее состояние: **T1 (каркас), T2 (слой данных), T3 (shared), T4 (stores и
+экраны ТЗ 8.1–8.7) и T5 (Supabase/Auth) завершены**. Следующая — T6 (Sync).
+PDF в детальном виде журнала и реальная синхронизация пока заглушки (Т7 и T6).
 
 Что уже есть в слое данных:
 
@@ -36,6 +36,26 @@ Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит �
 - `shared/ui/confirm-dialog/confirm-dialog.service.ts` — `ConfirmDialogService` поверх
   `ActionSheetController` (`header` + `subHeader` + кнопки `role: 'confirm'` / `role: 'cancel'`)
 - `shared/utils/uuid.ts` (UUID v4), `shared/utils/date.utils.ts` (`isIsoDate`)
+
+Что уже есть в Supabase/Auth (ТЗ 9.4, 11):
+
+- `core/supabase/supabase.client.ts` — `createSupabaseClient()` для DI: клиент
+  создаётся только при заполненных ключах в `environment`, иначе `null`
+  (офлайн и работа без Supabase обязательны, ТЗ 12.5); провайдер
+  `SupabaseClient` — в `app.config.ts`
+- `core/supabase/supabase.types.ts` — типы `Database` по схеме ТЗ 11.1
+  (строки — `interface extends Record<string, unknown>` ради `GenericTable`)
+- `core/auth/auth.service.ts` — `AuthService`: анонимный вход, magic-link,
+  привязка email, `currentUser` signal; сохранённую сессию восстанавливает
+  `onAuthStateChange` (хранение сейчас — localStorage, Capacitor Preferences
+  подключается в T8)
+- На онбординге (ТЗ 8.1, шаг 3) вызывается анонимный вход: ошибка не блокирует
+  запуск
+- `docs/supabase-schema.sql` — таблицы, индексы и RLS-политики (ТЗ 11.1–11.2),
+  выполняется вручную в SQL Editor проекта Supabase
+- **Отложено, рассмотрим позже (к T6):** «Выйти и удалить данные» в настройках
+  стирает только локальную БД. Решить при синхронизации, нужно ли при выходе
+  завершать сессию Supabase, иначе pull воскресит удалённые данные из облака
 
 Что уже есть в stores и экранах (ТЗ 3, 8.1–8.7):
 

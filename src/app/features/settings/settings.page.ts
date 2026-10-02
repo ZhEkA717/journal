@@ -166,6 +166,8 @@ export class SettingsPage {
     if (!confirmed) {
       return;
     }
+    // Отложено к T6 (см. AGENTS.md): wipe чистит только локальную БД — если не
+    // завершить сессию Supabase, pull воскресит удалённые данные из облака.
     try {
       await this.localData.wipe();
       this.session.reset();

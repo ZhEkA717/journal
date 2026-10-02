@@ -24,6 +24,7 @@
     "@angular/router": "^22.2.0",
     "@ionic/angular": "^9.0.5",
     "@ngrx/signals": "^22.0.1",
+    "@supabase/supabase-js": "^2.117.2",
     "dayjs": "^1.11.23",
     "dexie": "^4.4.6",
     "ionicons": "^8.1.0",

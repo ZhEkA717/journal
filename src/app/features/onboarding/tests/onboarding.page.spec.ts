@@ -2,15 +2,18 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { provideIonicAngular } from '@ionic/angular';
 
+import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { SessionStore } from '../../../stores/session.store';
 import { OnboardingPage } from '../onboarding.page';
 
 describe('OnboardingPage', () => {
   let setup_: ReturnType<typeof vi.fn>;
+  let signInAnonymously: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     setup_ = vi.fn().mockResolvedValue(undefined);
+    signInAnonymously = vi.fn().mockResolvedValue({ id: 'anon-1' });
     await TestBed.configureTestingModule({
       imports: [OnboardingPage],
       providers: [
@@ -32,6 +35,7 @@ describe('OnboardingPage', () => {
             setup: setup_,
           },
         },
+        { provide: AuthService, useValue: { signInAnonymously } },
         { provide: ToastService, useValue: { error: vi.fn(), success: vi.fn() } },
       ],
     }).compileComponents();
@@ -77,7 +81,7 @@ describe('OnboardingPage', () => {
     expect(text).toContain('Укажите ФИО ответственного');
   });
 
-  it('сохраняет организацию и открывает журналы', async () => {
+  it('сохраняет организацию, инициализирует анонимную сессию и открывает журналы', async () => {
     const fixture = render();
     type(fixture, 0, 'ООО «Ромашка»');
     type(fixture, 1, 'Иванова Мария');
@@ -89,7 +93,23 @@ describe('OnboardingPage', () => {
       name: 'ООО «Ромашка»',
       responsiblePerson: 'Иванова Мария',
     });
+    expect(signInAnonymously).toHaveBeenCalledTimes(1);
     expect(TestBed.inject(Router).url).toBe('/journals');
+  });
+
+  it('открывает журналы, даже если анонимный вход не удался (офлайн)', async () => {
+    signInAnonymously.mockRejectedValue(new Error('network down'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const fixture = render();
+    type(fixture, 0, 'ООО «Ромашка»');
+    type(fixture, 1, 'Иванова Мария');
+
+    clickStart(fixture);
+    await fixture.whenStable();
+
+    expect(setup_).toHaveBeenCalled();
+    expect(TestBed.inject(Router).url).toBe('/journals');
+    warn.mockRestore();
   });
 
   it('чистит ошибку поля после ввода', async () => {
