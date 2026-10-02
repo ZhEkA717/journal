@@ -59,7 +59,7 @@ describe('JournalService', async () => {
     it('подставляет название из шаблона и ставит журнал в очередь', async () => {
       const journal = await createJournal();
 
-      expect(journal.title).toBe('Журнал инструктажа по пожарной безопасности');
+      expect(journal.title).toBe('Журнал инструктажа по ПБ');
       expect(journal.syncStatus).toBe('pending');
       const queueItems = await queue.list();
       expect(queueItems.at(-1)?.entityType).toBe('journal');

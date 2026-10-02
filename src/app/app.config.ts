@@ -5,12 +5,12 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core';
 import {
+  PreloadAllModules,
   provideRouter,
   RouteReuseStrategy,
   withComponentInputBinding,
-  withPreloading,
-  PreloadAllModules,
   withNavigationErrorHandler,
+  withPreloading,
 } from '@angular/router';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular';
 
@@ -28,7 +28,12 @@ export const appConfig: ApplicationConfig = {
     ),
     // Required for the Angular router to drive Ionic transitions (TZ 4, 12.2).
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideIonicAngular({ mode: 'md' }),
+    // `swipeBackEnabled` в `mode: 'md'` выключен по умолчанию — включаем явно.
+    // При свайпе жест водит штатную транзицию сам, а после pop() Ionic играл её же
+    // повторно (вниз + fade) — двойная анимация; `navAnimation` гасит только повтор.
+    provideIonicAngular({
+      mode: 'ios',
+    }),
     provideHttpClient(withFetch()),
   ],
 };

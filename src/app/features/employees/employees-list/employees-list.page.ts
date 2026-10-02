@@ -59,25 +59,19 @@ import { EmployeesStore } from '../../../stores/employees.store';
           <ion-icon [name]="searchIcon" class="text-[22px]" aria-hidden="true" />
         </a>
       </div>
-
       @if (searchVisible()) {
-        <div class="px-screen-x pb-2">
-          <ion-searchbar
-            placeholder="Поиск по имени или должности"
-            [value]="store.query()"
-            (ionInput)="onSearch($event)"
-          />
-        </div>
+        <ion-searchbar
+          placeholder="Поиск по имени или должности"
+          [value]="store.query()"
+          (ionInput)="onSearch($event)"
+        />
       }
-
       <app-offline-banner [visible]="online.isOffline()" />
     </ion-header>
-
     <ion-content [fullscreen]="true">
       <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
         <ion-refresher-content />
       </ion-refresher>
-
       <div class="p-screen-x pt-between-sections pb-[calc(var(--tab-bar-safe-height)+96px)]">
         @if (store.loading()) {
           <div class="flex justify-center py-12">

@@ -81,11 +81,6 @@ import { FabComponent } from '../../../shared/ui/fab/fab.component';
       margin: 0;
       width: 100%;
     }
-
-    ion-popover.journal-menu {
-      --width: 220px;
-      --max-width: 90vw;
-    }
   `,
   template: `
     <ion-header>
@@ -104,30 +99,32 @@ import { FabComponent } from '../../../shared/ui/fab/fab.component';
     </ion-header>
 
     <ion-popover
+      [dismissOnSelect]="true"
       class="journal-menu"
       trigger="journal-menu-button"
       triggerAction="click"
-      style="--width: 220px; --max-width: 90vw;"
     >
-      <div class="flex w-full flex-col py-1">
-        <button
-          type="button"
-          class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-text)]"
-          [disabled]="store.isClosed()"
-          (click)="close()"
-        >
-          <ion-icon [name]="closeIcon" class="text-lg" aria-hidden="true" />
-          Закрыть журнал
-        </button>
-        <button
-          type="button"
-          class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-danger)]"
-          (click)="remove()"
-        >
-          <ion-icon [name]="trashIcon" class="text-lg" aria-hidden="true" />
-          Удалить журнал
-        </button>
-      </div>
+      <ng-template>
+        <div class="flex w-full flex-col py-1">
+          <button
+            type="button"
+            class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-text)]"
+            [disabled]="store.isClosed()"
+            (click)="close()"
+          >
+            <ion-icon [name]="closeIcon" class="text-lg" aria-hidden="true" />
+            Закрыть журнал
+          </button>
+          <button
+            type="button"
+            class="flex items-center gap-3 px-4 py-3 text-body text-[var(--color-danger)]"
+            (click)="remove()"
+          >
+            <ion-icon [name]="trashIcon" class="text-lg" aria-hidden="true" />
+            Удалить журнал
+          </button>
+        </div>
+      </ng-template>
     </ion-popover>
 
     <ion-content [fullscreen]="true">
