@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
   IonBackButton,
   IonButton,
@@ -29,6 +29,8 @@ import { OfflineBannerComponent } from '../../../shared/ui/offline-banner/offlin
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { shortName } from '../../../shared/utils/text.utils';
 import { errorMessage } from '../../../shared/utils/error.utils';
+import { DateService } from '../../../core/date/date.service';
+import { PdfGeneratorService, journalPdfFilename } from '../../../core/pdf/pdf-generator.service';
 import { OnlineStatusService } from '../../../core/sync/online-status.service';
 import { JournalDetailStore } from '../../../stores/journal-detail.store';
 import { JournalsStore } from '../../../stores/journals.store';
@@ -79,6 +81,11 @@ export class JournalDetailPage {
   private readonly router = inject(Router);
   private readonly confirm = inject(ConfirmDialogService);
   private readonly toast = inject(ToastService);
+  private readonly pdf = inject(PdfGeneratorService);
+  private readonly date = inject(DateService);
+
+  /** Идёт сборка или отправка PDF. */
+  protected readonly exporting = signal(false);
 
   /** Короткое имя сотрудника в строке таблицы. */
   protected readonly shortName = shortName;
@@ -169,9 +176,27 @@ export class JournalDetailPage {
     }
   }
 
-  /** Экспорт в PDF появится в задаче T7. */
+  /** Экспорт в PDF: сборка локально, затем шеринг или скачивание (ТЗ 8.4, 9.3). */
   protected async exportPdf(): Promise<void> {
-    await this.toast.show('Экспорт в PDF появится в следующих обновлениях');
+    const journal = this.store.journal();
+    if (!journal || this.exporting()) {
+      return;
+    }
+    this.exporting.set(true);
+    try {
+      const bytes = await this.pdf.generateJournal(this.journalId);
+      const filename = journalPdfFilename(journal.title, this.date.today());
+      await this.pdf.sharePdf(bytes, filename);
+      await this.toast.success('PDF готов');
+    } catch (error) {
+      // Отмена системного шеринга — не ошибка.
+      if ((error as { name?: string }).name === 'AbortError') {
+        return;
+      }
+      await this.toast.error(errorMessage(error, 'Не удалось экспортировать PDF'));
+    } finally {
+      this.exporting.set(false);
+    }
   }
 
   protected async backToList(): Promise<void> {

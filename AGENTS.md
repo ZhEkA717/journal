@@ -11,8 +11,8 @@ Angular 22 + Ionic 9 + Tailwind CSS 4 приложение для ведения
 Планируется разбить работу на задачи T1–T12 (каркас → данные → shared → экраны →
 Supabase/Auth → Sync → PDF → PWA/Capacitor → тесты → аудит критериев готовности).
 Текущее состояние: **T1 (каркас), T2 (слой данных), T3 (shared), T4 (stores и
-экраны ТЗ 8.1–8.7), T5 (Supabase/Auth) и T6 (Sync) завершены**. Следующая —
-T7 (PDF). PDF в детальном виде журнала пока заглушка (Т7).
+экраны ТЗ 8.1–8.7), T5 (Supabase/Auth), T6 (Sync) и T7 (PDF) завершены**.
+Следующая — T8 (PWA/Capacitor).
 
 Что уже есть в слое данных:
 
@@ -76,6 +76,27 @@ T7 (PDF). PDF в детальном виде журнала пока заглу�
 - **Отложено, рассмотрим позже:** «Выйти и удалить данные» стирает локальную БД
   и водяные знаки, но не завершает сессию Supabase — без `signOut()` pull при
   следующем старте воскресит данные из облака. Решение отложено пользователем.
+
+Что уже есть в PDF (ТЗ 9.3, 8.4):
+
+- `core/pdf/pdf-generator.service.ts` — `PdfGeneratorService`: `generateJournal(journalId)
+  → Uint8Array` (A4 595×842, шапка с организацией/ответственным/`legalRef`, таблица по
+  `template.columns`, повтор шапки таблицы на каждой странице, подписи встраиваются как
+  PNG, место подписи ответственного и «Стр. X из Y» внизу) и `sharePdf(bytes, filename)`
+  — Web Share API, иначе скачивание через ObjectURL (без `navigator.share` в jsdom
+  фоллбек тестируется спаями `URL.createObjectURL`/`HTMLAnchorElement.click`)
+- Шрифты Roboto TTF (`@expo-google-fonts/roboto`, devDep) отдаются из assets в `fonts/`,
+  грузятся рантаймом через `fetch` и кэшируются в `fontCache` (отказ убирает обещание из
+  кэша). URL шрифта резолвится через `new URL(url, document.baseURI)` — относительный
+  путь увёл бы fetch на `/journals/fonts/…` (404 на детальном виде, `<base href>` — источник
+  истины). pdf-lib + `@pdf-lib/fontkit` идут lazy-чанком journal-detail — бюджет initial
+  не растёт
+- Экспорт включён в `journal-detail.page.ts`: `exporting`-сигнал, спиннер на кнопке,
+  тосты; кнопка «Экспорт в PDF» показывается и у закрытого журнала, FAB — только у
+  открытого (ТЗ 8.4)
+- `resolveColumnWidths(columns, width)` и `journalPdfFilename(title, isoDate)`
+  экспортированы для тестов; `@types/node` добавлен в devDep (тесты читают TTF из
+  node_modules), `tsconfig.spec.json` — `types: ["vitest/globals", "node"]`
 
 Что уже есть в stores и экранах (ТЗ 3, 8.1–8.7):
 

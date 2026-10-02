@@ -31,6 +31,21 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "Roboto_400Regular.ttf",
+                "input": "node_modules/@expo-google-fonts/roboto/400Regular",
+                "output": "fonts"
+              },
+              {
+                "glob": "Roboto_700Bold.ttf",
+                "input": "node_modules/@expo-google-fonts/roboto/700Bold",
+                "output": "fonts"
+              },
+              {
+                "glob": "LICENSE_FONT",
+                "input": "node_modules/@expo-google-fonts/roboto",
+                "output": "fonts"
               }
             ],
             "styles": [

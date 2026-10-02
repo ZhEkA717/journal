@@ -155,18 +155,26 @@
   }
 </ion-content>
 
-@if (store.journal() && !store.isClosed()) {
+@if (store.journal()) {
   <ion-footer class="export-footer">
     <ion-button
       expand="block"
       fill="outline"
       color="primary"
       class="export-button h-11 font-semibold"
+      [disabled]="exporting()"
       (click)="exportPdf()"
     >
-      <ion-icon slot="start" [name]="downloadIcon" aria-hidden="true" />
-      Экспорт в PDF
+      @if (exporting()) {
+        <ion-spinner slot="start" name="crescent" aria-hidden="true" />
+        Формируем PDF…
+      } @else {
+        <ion-icon slot="start" [name]="downloadIcon" aria-hidden="true" />
+        Экспорт в PDF
+      }
     </ion-button>
   </ion-footer>
-  <app-fab ariaLabel="Добавить запись" (click)="addEntry()"></app-fab>
+  @if (!store.isClosed()) {
+    <app-fab ariaLabel="Добавить запись" (click)="addEntry()"></app-fab>
+  }
 }
