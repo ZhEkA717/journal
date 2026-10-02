@@ -69,6 +69,10 @@ ion-router-outlet {
     --padding-end: 12px;
     font-size: 16px;
     border-radius: 10px;
+
+    &_bg {
+      --background: var(--color-bg) !important;
+    }
   }
 
   .field-control-invalid {

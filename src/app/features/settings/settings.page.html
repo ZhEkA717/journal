@@ -16,7 +16,7 @@
         <div class="card-surface flex flex-col gap-between-cards p-inside-card">
           <app-form-field label="Название" [required]="true" [error]="errors()['name']">
             <ion-input
-              class="field-control"
+              class="field-control field-control_bg"
               fill="outline"
               [clearInput]="true"
               [value]="name()"
@@ -29,7 +29,7 @@
             [error]="errors()['responsiblePerson']"
           >
             <ion-input
-              class="field-control"
+              class="field-control field-control_bg"
               fill="outline"
               [clearInput]="true"
               [value]="responsiblePerson()"
@@ -38,7 +38,7 @@
           </app-form-field>
           <app-form-field label="ИНН" hint="Необязательно">
             <ion-input
-              class="field-control"
+              class="field-control field-control_bg"
               fill="outline"
               [clearInput]="true"
               [value]="inn()"
@@ -47,7 +47,7 @@
           </app-form-field>
           <app-form-field label="Адрес" hint="Необязательно">
             <ion-input
-              class="field-control"
+              class="field-control field-control_bg"
               fill="outline"
               [clearInput]="true"
               [value]="address()"
