@@ -95,7 +95,7 @@ const DERIVED_KEYS: readonly string[] = ['employee', 'position'];
                 fill="outline"
                 label="Сотрудник"
                 labelPlacement="stacked"
-                interface="popover"
+                interface="action-sheet"
                 [disabled]="isEditing"
                 [value]="employeeId() || null"
                 (ionChange)="onEmployee($event)"
@@ -147,7 +147,7 @@ const DERIVED_KEYS: readonly string[] = ['employee', 'position'];
                   <ion-select
                     class="field-control"
                     fill="outline"
-                    interface="popover"
+                    interface="action-sheet"
                     [label]="column.label"
                     labelPlacement="stacked"
                     [value]="stringValue(column.key) || null"
@@ -168,6 +168,7 @@ const DERIVED_KEYS: readonly string[] = ['employee', 'position'];
                   <ion-input
                     class="field-control"
                     fill="outline"
+                    [clearInput]="true"
                     type="number"
                     inputmode="decimal"
                     [value]="stringValue(column.key)"

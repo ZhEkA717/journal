@@ -66,7 +66,7 @@ import { EmployeesStore } from '../../../stores/employees.store';
       </ion-toolbar>
       @if (searchVisible()) {
         <ion-searchbar
-          placeholder="Поиск по имени или должности"
+          placeholder="Поиск по имени..."
           [value]="store.query()"
           (ionInput)="onSearch($event)"
         />

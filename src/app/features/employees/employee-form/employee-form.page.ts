@@ -47,9 +47,7 @@ import { EmployeesStore } from '../../../stores/employees.store';
         <ion-buttons slot="start">
           <ion-back-button defaultHref="/employees" text="" />
         </ion-buttons>
-        <ion-title class="text-h3">{{
-          isEditing() ? 'Сотрудник' : 'Новый сотрудник'
-        }}</ion-title>
+        <ion-title class="text-h3">{{ isEditing() ? 'Сотрудник' : 'Новый сотрудник' }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -59,7 +57,8 @@ import { EmployeesStore } from '../../../stores/employees.store';
           <ion-input
             class="field-control"
             [class.field-control-invalid]="errors()['fullName']"
-            fill="outline"
+            fill="solid"
+            [clearInput]="true"
             placeholder="Иванов Иван Иванович"
             [value]="fullName()"
             (ionInput)="onFullName($event)"
@@ -71,6 +70,7 @@ import { EmployeesStore } from '../../../stores/employees.store';
             class="field-control"
             [class.field-control-invalid]="errors()['position']"
             fill="outline"
+            [clearInput]="true"
             placeholder="Монтажник"
             [value]="position()"
             (ionInput)="onPosition($event)"

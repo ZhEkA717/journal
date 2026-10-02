@@ -65,6 +65,7 @@ const APP_VERSION = '0.0.0';
                 <ion-input
                   class="field-control"
                   fill="outline"
+                  [clearInput]="true"
                   [value]="name()"
                   (ionInput)="onName($event)"
                 />
@@ -77,6 +78,7 @@ const APP_VERSION = '0.0.0';
                 <ion-input
                   class="field-control"
                   fill="outline"
+                  [clearInput]="true"
                   [value]="responsiblePerson()"
                   (ionInput)="onResponsible($event)"
                 />
@@ -85,6 +87,7 @@ const APP_VERSION = '0.0.0';
                 <ion-input
                   class="field-control"
                   fill="outline"
+                  [clearInput]="true"
                   [value]="inn()"
                   (ionInput)="onInn($event)"
                 />
@@ -93,6 +96,7 @@ const APP_VERSION = '0.0.0';
                 <ion-input
                   class="field-control"
                   fill="outline"
+                  [clearInput]="true"
                   [value]="address()"
                   (ionInput)="onAddress($event)"
                 />

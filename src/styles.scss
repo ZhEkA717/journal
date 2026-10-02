@@ -68,10 +68,11 @@ ion-router-outlet {
     --padding-start: 12px;
     --padding-end: 12px;
     font-size: 16px;
+    border-radius: 10px;
   }
 
   .field-control-invalid {
-    --border-color: var(--color-danger);
+    border-color: var(--color-danger);
   }
 
   .card-surface {
@@ -115,21 +116,4 @@ ion-button[color="secondary"] {
 }
 ion-content {
   height: calc(100% - 56px);
-}
-
-// В модалках высота вычисляется иначе (модалка сама управляет размерами),
-// глобальное правило ломает `<ion-content>` внутри неё.
-ion-modal ion-content {
-  height: 100%;
-}
-
-// Ionic добавляет класс `.ion-page` к компоненту внутри `<ion-modal>`. По
-// умолчанию он `position: absolute` с `contain: layout size style`, из-за чего
-// контент модалки схлопывается в 0×0 — переопределяем под модальный контекст.
-ion-modal .ion-page {
-  position: static;
-  contain: none;
-  overflow: visible;
-  height: 100%;
-  width: 100%;
 }
